@@ -16,16 +16,78 @@ public final class R {
     public static final class drawable {
         public static final int bg=0x7f020000;
         public static final int ic_launcher=0x7f020001;
-        public static final int splash=0x7f020002;
+        public static final int s01=0x7f020002;
+        public static final int s02=0x7f020003;
+        public static final int s03=0x7f020004;
+        public static final int s04=0x7f020005;
+        public static final int s05=0x7f020006;
+        public static final int splash=0x7f020007;
     }
     public static final class id {
-        public static final int splashscreen=0x7f060000;
+        public static final int Date=0x7f080003;
+        public static final int DescText=0x7f080004;
+        public static final int Icon=0x7f080006;
+        public static final int Title=0x7f080007;
+        public static final int add=0x7f08000b;
+        public static final int butCancel=0x7f080002;
+        public static final int butSave=0x7f080001;
+        public static final int buttons=0x7f080000;
+        public static final int delete=0x7f08000a;
+        public static final int deleteAll=0x7f08000c;
+        public static final int edit=0x7f080009;
+        public static final int exit=0x7f08000d;
+        public static final int gallery=0x7f080005;
+        public static final int splashscreen=0x7f080008;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
+        public static final int add_update=0x7f030000;
+        public static final int item=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int splash=0x7f030003;
+    }
+    public static final class menu {
+        public static final int context_menu=0x7f070000;
+        public static final int main_menu=0x7f070001;
     }
     public static final class string {
+        public static final int add=0x7f05000e;
         public static final int app_name=0x7f050001;
+        public static final int cancel=0x7f05000a;
+        public static final int datefield=0x7f050004;
+        public static final int delete=0x7f050009;
+        public static final int deleteAll=0x7f05000c;
+        public static final int edit=0x7f050008;
+        public static final int entertext=0x7f050006;
+        public static final int exit=0x7f05000d;
         public static final int hello=0x7f050000;
+        public static final int icon=0x7f05000b;
+        public static final int iconfield=0x7f050005;
+        public static final int save=0x7f050007;
+        public static final int textfield=0x7f050003;
+        public static final int title=0x7f050002;
     }
+    public static final class style {
+        public static final int TextStyle=0x7f060000;
+    }
+    public static final class styleable {
+        /** Attributes that can be used with a MyGallery.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #MyGallery_android_galleryItemBackground mj.android.emmenia:android_galleryItemBackground}</code></td><td></td></tr>
+           </table>
+           @see #MyGallery_android_galleryItemBackground
+         */
+        public static final int[] MyGallery = {
+            0x0101004c
+        };
+        /**
+          <p>This symbol is the offset where the {@link mj.android.emmenia.R.attr#android_galleryItemBackground}
+          attribute's value can be found in the {@link #MyGallery} array.
+          @attr name android:android_galleryItemBackground
+        */
+        public static final int MyGallery_android_galleryItemBackground = 0;
+    };
 }
