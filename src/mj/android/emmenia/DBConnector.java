@@ -1,6 +1,7 @@
-package mj.android.simpledb;
+package mj.android.emmenia;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,9 +12,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBConnector {
 	
 	// Данные базы данных и таблиц
-	private static final String DATABASE_NAME = "simple.db";
+	private static final String DATABASE_NAME = "emmenia.db";
 	private static final int DATABASE_VERSION = 1;
-	private static final String TABLE_NAME = "MyData";
+	private static final String TABLE_NAME = "Emmenia";
 	
 	// Название столбцов
 	private static final String COLUMN_ID = "_id";
@@ -34,7 +35,7 @@ public class DBConnector {
 		mDataBase = mOpenHelper.getWritableDatabase();
 	}
 	
-	public long insert(MyData md) {
+	public long insert(OneEntry md) {
 		ContentValues cv=new ContentValues();
 		cv.put(COLUMN_DATE, md.getDate());
 		cv.put(COLUMN_TITLE, md.getTitle());
@@ -43,7 +44,7 @@ public class DBConnector {
 		return mDataBase.insert(TABLE_NAME, null, cv);
 	}
 	
-	public int update(MyData md) {
+	public int update(OneEntry md) {
 		ContentValues cv=new ContentValues();
 		cv.put(COLUMN_DATE, md.getDate());
 		cv.put(COLUMN_TITLE, md.getTitle());
@@ -59,31 +60,58 @@ public class DBConnector {
 		mDataBase.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
 	}
 	
-	public MyData select(long id) {
+	public OneEntry select(long id) {
 		Cursor mCursor = mDataBase.query(TABLE_NAME, null, COLUMN_ID + " = ?", new String[] { String.valueOf(id) }, null, null, COLUMN_DATE);
 		
 		mCursor.moveToFirst();
 		long date = mCursor.getLong(NUM_COLUMN_DATE);
 		String title = mCursor.getString(NUM_COLUMN_TITLE);
 		int icon = mCursor.getInt(NUM_COLUMN_ICON);
-		return new MyData(id, date, title, icon);
+		return new OneEntry(id, date, title, icon);
 	}
 	
-	public ArrayList<MyData> selectAll() {
+	public ArrayList<OneEntry> selectAll() {
 		Cursor mCursor = mDataBase.query(TABLE_NAME, null, null, null, null, null, COLUMN_DATE);
 		
-		ArrayList<MyData> arr = new ArrayList<MyData>();
+		ArrayList<OneEntry> arr = new ArrayList<OneEntry>();
 		mCursor.moveToFirst();
+		long prevDate = -1;
 		if (!mCursor.isAfterLast()) {
 			do {
 				long id = mCursor.getLong(NUM_COLUMN_ID);
 				long date = mCursor.getLong(NUM_COLUMN_DATE);
 				String title = mCursor.getString(NUM_COLUMN_TITLE);
 				int icon = mCursor.getInt(NUM_COLUMN_ICON);
-				arr.add(new MyData(id, date, title, icon));
+				OneEntry md = new OneEntry(id, date, title, icon);
+				int days = -1;
+				if (prevDate > 0)
+					days = (int)((date - prevDate) / 1000 / 60 / 60 / 24);
+				md.setDays(days);
+				prevDate = date;				
+				arr.add(md);
 			} while (mCursor.moveToNext());
 		}
+		Collections.reverse(arr);
 		return arr;
+	}
+	
+	public int selectAvg() {
+		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[]{COLUMN_DATE}, null, null, null, null, COLUMN_DATE);
+		
+		mCursor.moveToFirst();
+		long prevDate = -1;
+		int sum = 0;
+		if (!mCursor.isAfterLast()) {
+			do {
+				long date = mCursor.getLong(NUM_COLUMN_DATE);
+				int days = -1;
+				if (prevDate > 0)
+					days = (int)((date - prevDate) / 1000 / 60 / 60 / 24);
+				sum += days;
+			} while (mCursor.moveToNext());
+		}
+		int avg = sum / mCursor.getCount();
+		return avg;
 	}
 	
 	private class OpenHelper extends SQLiteOpenHelper {

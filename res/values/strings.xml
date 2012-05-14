@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SimpleDBActivity!</string>
-    <string name="app_name">SimpleDB</string>
-    <string name="title">SimpleDB</string>
-    <string name="textfield">Текст:</string>
+    <string name="hello">Emmenia</string>
+    <string name="app_name">Emmenia</string>
+    <string name="title">Emmenia</string>
+    <string name="textfield">Комментарий:</string>
     <string name="datefield">Дата:</string>
-    <string name="iconfield">Иконка:</string>
+    <string name="iconfield">Мое состояние:</string>
     <string name="entertext">Введите текст</string>
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отмена</string>
     <string name="icon">Icon</string>
-    <string name="deleteAll">Удалить все</string>
+    <string name="Statistic">Статистика</string>
+    <string name="Settings">Настройки</string>    
     <string name="exit">Выход</string>
     <string name="add">Добавить</string>
+    <string name="days">Дней:</string>
 </resources>

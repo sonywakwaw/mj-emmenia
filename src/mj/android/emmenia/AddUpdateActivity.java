@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;  
-//import android.util.Log;
 import android.view.View;  
 import android.view.ViewGroup;  
 import android.view.View.OnClickListener;
@@ -27,14 +26,13 @@ public class AddUpdateActivity extends Activity  {
 	private TextView mTextView;
 	private DatePicker mDatePicker;
 	Context mContext;
-	private long MyDataID;
+	private long EntryID;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_update);
-        	
         // Галерея
         mGallery = (Gallery) findViewById(R.id.gallery);
         mImageAdapter = new ImageAdapter(this);  
@@ -45,16 +43,16 @@ public class AddUpdateActivity extends Activity  {
         mTextView = (TextView) findViewById(R.id.DescText);
         mDatePicker = (DatePicker) findViewById(R.id.Date);
         
-        if (getIntent().hasExtra("MyData")) {
-        	OneEntry md = (OneEntry) getIntent().getSerializableExtra("MyData");
+        if (getIntent().hasExtra("OneEntry")) {
+        	OneEntry md = (OneEntry) getIntent().getSerializableExtra("OneEntry");
         	Date d = new Date (md.getDate());
         	mDatePicker.updateDate(d.getYear() + 1900, d.getMonth(), d.getDate());
         	mGallery.setSelection(mImageAdapter.getPositionbyResId(md.getIcon()));
         	mTextView.setText(md.getTitle());
-        	MyDataID = md.getID();
+        	EntryID = md.getID();
         }
         else {
-        	MyDataID = -1;
+        	EntryID = -1;
         	mGallery.setSelection(mImageAdapter.getCount() / 2);
         }
         
@@ -63,19 +61,21 @@ public class AddUpdateActivity extends Activity  {
         butCancel = (Button) findViewById(R.id.butCancel);
         
         butSave.setOnClickListener (new OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
             	
             	Date date = new Date(mDatePicker.getYear()-1900, mDatePicker.getMonth(), mDatePicker.getDayOfMonth());
-           		OneEntry md = new OneEntry (MyDataID, date.getTime(), mTextView.getText().toString(), mImageAdapter.getResourceId(mGallery.getSelectedItemPosition()));
+           		OneEntry md = new OneEntry (EntryID, date.getTime(), mTextView.getText().toString(), mImageAdapter.getResourceId(mGallery.getSelectedItemPosition()));
             	Intent intent = getIntent();
-            	intent.putExtra("MyData", md);
+            	intent.putExtra("OneEntry", md);
             	setResult(RESULT_OK, intent);
             	finish();
             }
          });
 
         butCancel.setOnClickListener (new OnClickListener() {
-            public void onClick(View v) {
+            @Override
+			public void onClick(View v) {
             	setResult(RESULT_CANCELED, new Intent());
             	finish();
             }
@@ -87,7 +87,7 @@ public class AddUpdateActivity extends Activity  {
         int bg;
 
         private int[] mImageIds = {  
-        		R.drawable.s01, R.drawable.s02, R.drawable.s03, R.drawable.s04, R.drawable.s05};  
+        		R.drawable.e01, R.drawable.e02, R.drawable.e03, R.drawable.e04, R.drawable.e05, R.drawable.e06, R.drawable.e07};  
 
         public ImageAdapter(Context c) {
             mContext = c;
@@ -96,15 +96,18 @@ public class AddUpdateActivity extends Activity  {
             attr.recycle();
         }
 
-        public int getCount() {
+        @Override
+		public int getCount() {
             return mImageIds.length;
         }
 
-        public Object getItem(int position) {
+        @Override
+		public Object getItem(int position) {
             return position;
         }
 
-        public long getItemId(int position) {
+        @Override
+		public long getItemId(int position) {
             return position;
         }
         
@@ -122,7 +125,8 @@ public class AddUpdateActivity extends Activity  {
             return 0;
         }
         
-        public View getView(int position, View convertView, ViewGroup parent) {
+        @Override
+		public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(mContext);
             imageView.setImageResource(mImageIds[position]);
             imageView.setScaleType(ImageView.ScaleType.CENTER);

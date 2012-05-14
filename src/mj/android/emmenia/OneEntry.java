@@ -9,6 +9,7 @@ public class OneEntry implements Serializable{
 	private long date;
 	private String title;
 	private int icon;
+	private int days;
 	
 	public OneEntry (long id, long date, String title, int icon) {
 		this.id = id;
@@ -21,4 +22,6 @@ public class OneEntry implements Serializable{
 	public long getDate () {return date;}
 	public String getTitle () {return title;}
 	public int getIcon () {return icon;}
+	public int getDays () {return days;}
+	public void setDays (int days) {this.days = days;}
 }

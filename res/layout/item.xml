@@ -7,6 +7,7 @@
 		android:id="@+id/Icon" 
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_gravity="center"
 		android:contentDescription="@string/icon"
 	/>
             
@@ -16,20 +17,45 @@
 		android:orientation="vertical"
 		android:paddingLeft="5dp" >
 		<TextView 
-			android:id="@+id/Title" 
+			android:id="@+id/Date" 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="20sp"
 			android:textStyle="bold"
-			android:textColor="#677566"
+			android:textColor="#B99090"
 		/>
-	
-		<TextView  
-			android:id="@+id/Date"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:textSize="14sp"
-			android:textStyle="italic"
-		/>
+		
+		<LinearLayout
+			android:layout_height="wrap_content" 
+			android:layout_width="wrap_content"
+			android:orientation="horizontal"
+			android:paddingLeft="5dp" >
+			
+		    <TextView  
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				android:text="@string/days"
+			/>
+		    
+		    <TextView  
+				android:id="@+id/Days"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:textSize="14sp"
+				android:textStyle="italic"
+				android:paddingLeft="5dp"
+				android:paddingRight="15dp"
+			/>
+		    
+			<TextView  
+				android:id="@+id/Title"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:textSize="12sp"
+				android:textStyle="italic"
+			/>
+		</LinearLayout>
 	</LinearLayout>
 </LinearLayout>

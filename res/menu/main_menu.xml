@@ -2,13 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/add" 
         android:title="@string/add" 
-        android:icon="@android:drawable/ic_menu_add"/>
+        android:icon="@drawable/b_add"/>
     
-	<item android:id="@+id/deleteAll" 
-	    android:title="@string/deleteAll" 
-	    android:icon="@android:drawable/ic_menu_delete"/>
+	<item android:id="@+id/stat" 
+	    android:title="@string/Statistic" 
+	    android:icon="@drawable/b_stat"/>
+	
+	<item android:id="@+id/settings" 
+	    android:title="@string/Settings" 
+	    android:icon="@drawable/b_prefs"/>
 	
 	<item android:id="@+id/exit" 
 	    android:title="@string/exit" 
-	    android:icon="@android:drawable/ic_menu_close_clear_cancel"/>
+	    android:icon="@drawable/b_exit"/>
 </menu>
