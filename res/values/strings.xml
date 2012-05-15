@@ -17,4 +17,10 @@
     <string name="exit">Выход</string>
     <string name="add">Добавить</string>
     <string name="days">Дней:</string>
+    <string name="day">День:</string>
+    <string name="prefTitle">Emmenia: Настройки</string>
+    <string name="prefCommon">Общие</string>
+    <string name="autoCalc">Расчитывать период</string>
+    <string name="autoCalcSum">Автоматический расчет периода</string>
+    <string name="period">Точный период</string>
 </resources>

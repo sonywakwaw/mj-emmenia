@@ -5,4 +5,28 @@
 	    <item name="android:textSize">14dp</item>
 	    <item name="android:textStyle">bold</item>
 	</style>
+	
+    <style name="listDate">
+		<item name="android:textColor">#B99090</item>
+	    <item name="android:textSize">20dp</item>
+	    <item name="android:textStyle">bold</item>
+	</style>
+	
+    <style name="listDaysName">
+	    <item name="android:textSize">14dp</item>
+	    <item name="android:textStyle">bold</item>
+	</style>
+	
+    <style name="listDays">
+	    <item name="android:textSize">14dp</item>
+	    <item name="android:textStyle">italic</item>
+	    <item name="android:paddingLeft">5dp</item>
+	    <item name="android:paddingRight">15dp</item>
+	</style>
+	
+    <style name="listTitle">
+	    <item name="android:textSize">12dp</item>
+	    <item name="android:textStyle">italic</item>
+	</style>
+    
 </resources>

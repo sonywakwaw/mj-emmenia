@@ -114,6 +114,15 @@ public class DBConnector {
 		return avg;
 	}
 	
+	public long selectMaxDate() {
+		
+		String query = "SELECT MAX(" + COLUMN_DATE  + ") FROM " + TABLE_NAME;
+	    Cursor mCursor = mDataBase.rawQuery(query, null);
+	    
+		mCursor.moveToFirst();
+		return mCursor.getLong(0);
+	}
+	
 	private class OpenHelper extends SQLiteOpenHelper {
 				
 		OpenHelper(Context context) {

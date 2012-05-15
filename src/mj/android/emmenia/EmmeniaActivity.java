@@ -2,6 +2,7 @@ package mj.android.emmenia;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,10 +27,15 @@ public class EmmeniaActivity extends Activity {
 	DBConnector mDBConnector;
 	Context mContext;
 	ListView mListView;
+	TextView mNextDate;
+	TextView mCurDay;
+	ImageView mIconState;
 	myListAdapter mAdapter;
 	
 	int ADD_ACTIVITY = 0;
 	int UPDATE_ACTIVITY = 1;
+	
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 	
     /** Called when the activity is first created. */
     @Override
@@ -37,16 +43,39 @@ public class EmmeniaActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        mContext = this;
-        
+        mContext = this;        
         mDBConnector = new DBConnector (this);
         
+        // Следующая дата
+        mNextDate = (TextView)findViewById(R.id.nextDate);
+        mCurDay = (TextView)findViewById(R.id.curDay);
+        mIconState = (ImageView)findViewById(R.id.iconState);
+        
+        mCurDay.setText(getCurrentDay());
+        
+        
+        // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
         mAdapter.setArrayMyData(mDBConnector.selectAll());
         mListView.setAdapter(mAdapter);
-        
         registerForContextMenu(mListView);
+    }
+    
+    private String getCurrentDay() {
+    	long today = (new Date()).getTime();
+        long lastDay = mDBConnector.selectMaxDate();
+        if (today < lastDay)
+        	return "-";
+        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24));
+    }
+    
+    private String getNextDate() {
+    	long today = (new Date()).getTime();
+        long lastDay = mDBConnector.selectMaxDate();
+        if (today < lastDay)
+        	return "-";
+        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24));
     }
     
     @Override 
@@ -96,6 +125,9 @@ public class EmmeniaActivity extends Activity {
             	//mDBConnector.deleteAll();
             	updateList();
                 return true;
+            case R.id.settings:
+            	startActivity(new Intent(mContext, Preferences.class));
+	            return true;
             case R.id.exit:
                 finish();
                 return true;
@@ -164,10 +196,10 @@ public class EmmeniaActivity extends Activity {
     		TextView vDate = (TextView)convertView.findViewById(R.id.Date);
     		TextView vDays = (TextView)convertView.findViewById(R.id.Days);
     		
-    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy"); 
+    		 
     		
     		OneEntry md = arrayMyData.get(position);    			
-   			vDate.setText(dateFormat.format(md.getDate()));
+   			vDate.setText(DATE_FORMAT.format(md.getDate()));
    			vTitle.setText(md.getTitle());
    			vIcon.setImageResource(md.getIcon());
    			int days = md.getDays();

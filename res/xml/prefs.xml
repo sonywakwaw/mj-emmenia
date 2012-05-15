@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android" >
+	<PreferenceCategory
+		android:title="@string/prefCommon">
+	
+	    <CheckBoxPreference
+			android:key="autoCalc"
+			android:title="@string/autoCalc"
+			android:defaultValue="true"
+			android:summary="@string/autoCalcSum"
+			android:disableDependentsState="true"
+			/>
+
+	    <EditTextPreference
+			android:key="period"
+			android:title="@string/period"
+			android:defaultValue="28"
+			android:summary=" "
+			android:dependency="autoCalc"
+			android:numeric="decimal"
+			android:maxLength="2"
+			 
+			 />
+
+    </PreferenceCategory>
+<!--  
+<CheckBoxPreference
+ android:key="cbp"
+ android:title="CheckBoxPreference"
+ android:defaultValue="true"
+ android:summary="This is CheckBoxPreference"
+ />
+ 
+<EditTextPreference
+ android:key="etp"
+ android:title="EditTextPreference"
+ android:defaultValue="My Text"
+ android:summary="This is EditTextPreference"
+ />
+
+<RingtonePreference
+ android:key="rp"
+ android:title="RingtonePreference"
+ android:summary="This is RingtonePreference"
+/>
+
+<Preference
+ android:key="customPref"
+ android:title="Preference"
+ android:summary="This is Preference"
+/>
+   -->  
+</PreferenceScreen>
