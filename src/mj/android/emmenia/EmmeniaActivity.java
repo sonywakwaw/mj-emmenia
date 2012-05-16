@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ public class EmmeniaActivity extends Activity {
 	TextView mCurDay;
 	ImageView mIconState;
 	myListAdapter mAdapter;
+	Button mButStat, mButAdd;
 	
 	int ADD_ACTIVITY = 0;
 	int UPDATE_ACTIVITY = 1;
@@ -58,21 +61,45 @@ public class EmmeniaActivity extends Activity {
         mCurDay.setText(getCurrentDay());
         mNextDate.setText(getNextDate());
         
-        
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
         mAdapter.setArrayMyData(mDBConnector.selectAll());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
+        
+        // Кнопки
+        mButStat = (Button)findViewById(R.id.but_stat);
+        mButAdd = (Button)findViewById(R.id.but_add);
+        
+        mButStat.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	actionStat();
+            }
+         });
+        
+        mButAdd.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	actionAdd();
+            }
+         });
+    }
+    
+    private void actionStat() {
+    	
+    }
+    
+    private void actionAdd() {
+    	Intent i = new Intent(mContext, AddUpdateActivity.class);
+    	startActivityForResult (i, ADD_ACTIVITY);
     }
     
     private String getCurrentDay() {
     	long today = (new Date()).getTime();
         long lastDay = mDBConnector.selectMaxDate();
-        
-        Log.w("MY", "today: " + today);
-        Log.w("MY", "lastDay: " + lastDay);
+
         if (today < lastDay || lastDay == 0)
         	return getString (R.string.no_period);
         return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24) + 1);
@@ -80,13 +107,11 @@ public class EmmeniaActivity extends Activity {
     
     private String getNextDate() {
         long lastDay = mDBConnector.selectMaxDate();
-        Log.w("MY", "lastDay " + lastDay);
         int period = getPeriod ();
         Log.w("MY", "period " + period);
         if (period < 0 || lastDay < 0)
         	return getString (R.string.no_date);
-        
-        lastDay += period * 24 * 60 * 60 * 1000;
+        lastDay += (long)period * 24 * 60 * 60 * 1000;
         return DATE_FORMAT.format(new Date (lastDay));
     }
     
@@ -119,15 +144,15 @@ public class EmmeniaActivity extends Activity {
     		OneEntry md = mDBConnector.select(info.id);
     		i.putExtra("OneEntry", md);
         	startActivityForResult (i, UPDATE_ACTIVITY);
-        	updateData();
-    		return true;
+        	break;
     	case R.id.delete:
     		mDBConnector.delete (info.id);
-    		updateData();
-    		return true;
+    		break;
     	default:
     		return super.onContextItemSelected(item);
     	}
+    	updateData();
+		return true;
     }
     
     @Override
@@ -142,23 +167,22 @@ public class EmmeniaActivity extends Activity {
         // Handle item selection
         switch (item.getItemId()) {
 	        case R.id.add:
-	        	Intent i = new Intent(mContext, AddUpdateActivity.class);
-            	startActivityForResult (i, ADD_ACTIVITY);
-            	updateData();
-	            return true;
+	        	actionAdd();
+            	break;
             case R.id.stat:
-            	//mDBConnector.deleteAll();
-            	updateData();
-                return true;
+            	actionStat();
+            	break;
             case R.id.settings:
             	startActivity(new Intent(mContext, Preferences.class));
-	            return true;
+            	break;
             case R.id.exit:
                 finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        updateData();
+        return true;
     }
     
     @Override
