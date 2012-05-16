@@ -16,7 +16,9 @@
     <string name="Settings">Настройки</string>    
     <string name="exit">Выход</string>
     <string name="add">Добавить</string>
-    <string name="days">Дней:</string>
+    <string name="days">Цикл:</string>
+    <string name="no_date">Неизвестно</string>
+    <string name="no_period">-</string>
     <string name="day">День:</string>
     <string name="prefTitle">Emmenia: Настройки</string>
     <string name="prefCommon">Общие</string>

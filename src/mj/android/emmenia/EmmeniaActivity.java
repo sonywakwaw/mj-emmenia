@@ -7,6 +7,8 @@ import java.util.Date;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -42,6 +45,7 @@ public class EmmeniaActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        Log.w("MY", "EmmeniaActivity");
         
         mContext = this;        
         mDBConnector = new DBConnector (this);
@@ -52,6 +56,7 @@ public class EmmeniaActivity extends Activity {
         mIconState = (ImageView)findViewById(R.id.iconState);
         
         mCurDay.setText(getCurrentDay());
+        mNextDate.setText(getNextDate());
         
         
         // Список
@@ -65,17 +70,37 @@ public class EmmeniaActivity extends Activity {
     private String getCurrentDay() {
     	long today = (new Date()).getTime();
         long lastDay = mDBConnector.selectMaxDate();
-        if (today < lastDay)
-        	return "-";
-        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24));
+        
+        Log.w("MY", "today: " + today);
+        Log.w("MY", "lastDay: " + lastDay);
+        if (today < lastDay || lastDay == 0)
+        	return getString (R.string.no_period);
+        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24) + 1);
     }
     
     private String getNextDate() {
-    	long today = (new Date()).getTime();
         long lastDay = mDBConnector.selectMaxDate();
-        if (today < lastDay)
-        	return "-";
-        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24));
+        Log.w("MY", "lastDay " + lastDay);
+        int period = getPeriod ();
+        Log.w("MY", "period " + period);
+        if (period < 0 || lastDay < 0)
+        	return getString (R.string.no_date);
+        
+        lastDay += period * 24 * 60 * 60 * 1000;
+        return DATE_FORMAT.format(new Date (lastDay));
+    }
+    
+    private int getPeriod () {
+    	// Настройки
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean prefAutoCalc = settings.getBoolean("autoCalc", false);
+        if (prefAutoCalc)
+        	return mDBConnector.selectAvg();
+
+        Integer prefPeriod = Integer.getInteger(settings.getString("period", null));
+        if (prefPeriod > 0)
+        	return prefPeriod;
+        return -1;    	
     }
     
     @Override 
@@ -94,11 +119,11 @@ public class EmmeniaActivity extends Activity {
     		OneEntry md = mDBConnector.select(info.id);
     		i.putExtra("OneEntry", md);
         	startActivityForResult (i, UPDATE_ACTIVITY);
-        	updateList();
+        	updateData();
     		return true;
     	case R.id.delete:
     		mDBConnector.delete (info.id);
-    		updateList();
+    		updateData();
     		return true;
     	default:
     		return super.onContextItemSelected(item);
@@ -119,11 +144,11 @@ public class EmmeniaActivity extends Activity {
 	        case R.id.add:
 	        	Intent i = new Intent(mContext, AddUpdateActivity.class);
             	startActivityForResult (i, ADD_ACTIVITY);
-            	updateList();
+            	updateData();
 	            return true;
             case R.id.stat:
             	//mDBConnector.deleteAll();
-            	updateList();
+            	updateData();
                 return true;
             case R.id.settings:
             	startActivity(new Intent(mContext, Preferences.class));
@@ -145,13 +170,16 @@ public class EmmeniaActivity extends Activity {
         		mDBConnector.update(md);
         	else
         		mDBConnector.insert(md);
-        	updateList();
+        	updateData();
         }        
     }
     
-    private void updateList () {
+    private void updateData () {
     	mAdapter.setArrayMyData(mDBConnector.selectAll());
     	mAdapter.notifyDataSetChanged();
+    	
+    	mCurDay.setText(getCurrentDay());
+        mNextDate.setText(getNextDate());
     }
         
     class myListAdapter extends BaseAdapter {

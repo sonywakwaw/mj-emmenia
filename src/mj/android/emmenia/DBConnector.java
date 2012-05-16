@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBConnector {
 	
@@ -33,6 +34,7 @@ public class DBConnector {
 	public DBConnector(Context context) {
 		OpenHelper mOpenHelper = new OpenHelper(context);
 		mDataBase = mOpenHelper.getWritableDatabase();
+		Log.w("MY", "DBConnector");
 	}
 	
 	public long insert(OneEntry md) {
@@ -97,20 +99,24 @@ public class DBConnector {
 	
 	public int selectAvg() {
 		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[]{COLUMN_DATE}, null, null, null, null, COLUMN_DATE);
+		// если дат еще нет, или только одна, то период высчитать не можем
+		if (mCursor.getCount() < 2)
+			return -1;
 		
 		mCursor.moveToFirst();
 		long prevDate = -1;
 		int sum = 0;
 		if (!mCursor.isAfterLast()) {
 			do {
-				long date = mCursor.getLong(NUM_COLUMN_DATE);
-				int days = -1;
+				long date = mCursor.getLong(0);
+				int days = 0;
 				if (prevDate > 0)
 					days = (int)((date - prevDate) / 1000 / 60 / 60 / 24);
 				sum += days;
+				prevDate = date;
 			} while (mCursor.moveToNext());
 		}
-		int avg = sum / mCursor.getCount();
+		int avg = sum / (mCursor.getCount() - 1);
 		return avg;
 	}
 	
