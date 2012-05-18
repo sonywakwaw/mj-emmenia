@@ -118,12 +118,15 @@ public class EmmeniaActivity extends Activity {
     private int getPeriod () {
     	// Настройки
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean prefAutoCalc = settings.getBoolean("autoCalc", false);
+        Log.w("MY", "-1-");
+        boolean prefAutoCalc = settings.getBoolean("autoCalc", true);
+        Log.w("MY", "prefAutoCalc: " + prefAutoCalc);
         if (prefAutoCalc)
         	return mDBConnector.selectAvg();
-
+        Log.w("MY", "-2-");
         Integer prefPeriod = Integer.getInteger(settings.getString("period", null));
-        if (prefPeriod > 0)
+        Log.w("MY", "prefPeriod: " + prefPeriod);
+        if (prefPeriod != null && prefPeriod > 0)
         	return prefPeriod;
         return -1;    	
     }

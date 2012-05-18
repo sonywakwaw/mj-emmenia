@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 
 public class Preferences extends PreferenceActivity implements Preference.OnPreferenceChangeListener
 {
 	CheckBoxPreference autoCalc;
 	EditTextPreference period;
+	Preference additional;
 	
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -19,6 +22,7 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         
         autoCalc = (CheckBoxPreference)this.findPreference("autoCalc");
         period = (EditTextPreference)this.findPreference("period");
+        additional = (Preference)this.findPreference("additional");
         
         // слушатель
         autoCalc.setOnPreferenceChangeListener(this);
@@ -26,6 +30,14 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         
         // пишем в summary текущее значение
         period.setSummary(period.getText() + " (дн.)");
+        
+        additional.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+            //handle action on click here
+            	Log.w("MY", "asasasasasasasasas");
+            	return true;
+            }
+        });
     }
     
     @Override

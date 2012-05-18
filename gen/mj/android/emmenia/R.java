@@ -75,6 +75,8 @@ public final class R {
         public static final int main_menu=0x7f080001;
     }
     public static final class string {
+        public static final int Additional=0x7f060019;
+        public static final int AdditionalSummary=0x7f06001a;
         public static final int Settings=0x7f06000d;
         public static final int Statistic=0x7f06000c;
         public static final int add=0x7f06000f;

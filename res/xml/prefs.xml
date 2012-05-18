@@ -22,33 +22,10 @@
 			android:maxLength="2"
 			 
 			 />
-
-    </PreferenceCategory>
-<!--  
-<CheckBoxPreference
- android:key="cbp"
- android:title="CheckBoxPreference"
- android:defaultValue="true"
- android:summary="This is CheckBoxPreference"
- />
- 
-<EditTextPreference
- android:key="etp"
- android:title="EditTextPreference"
- android:defaultValue="My Text"
- android:summary="This is EditTextPreference"
- />
-
-<RingtonePreference
- android:key="rp"
- android:title="RingtonePreference"
- android:summary="This is RingtonePreference"
-/>
-
-<Preference
- android:key="customPref"
- android:title="Preference"
- android:summary="This is Preference"
-/>
-   -->  
+		<Preference
+			 android:key="additional"
+			 android:title="@string/Additional"
+			 android:summary="@string/AdditionalSummary"
+			/>
+    </PreferenceCategory> 
 </PreferenceScreen>

@@ -25,4 +25,6 @@
     <string name="autoCalc">Расчитывать период</string>
     <string name="autoCalcSum">Автоматический расчет периода</string>
     <string name="period">Точный период</string>
+    <string name="Additional">Дополнительные даты</string>
+    <string name="AdditionalSummary">Дополнительные даты цикла</string>
 </resources>
