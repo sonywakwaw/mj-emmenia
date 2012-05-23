@@ -29,52 +29,72 @@ public class DBConnector {
 	private static final int NUM_COLUMN_TITLE = 2;
 	private static final int NUM_COLUMN_ICON = 3;
 	
-	private SQLiteDatabase mDataBase;
+	private OpenHelper mOpenHelper;
 
 	public DBConnector(Context context) {
-		OpenHelper mOpenHelper = new OpenHelper(context);
-		mDataBase = mOpenHelper.getWritableDatabase();
+		mOpenHelper = new OpenHelper(context);
 		Log.w("MY", "DBConnector");
 	}
 	
-	public long insert(OneEntry md) {
+	public long insert(OneEntry md) throws Exception {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[] {COLUMN_ID}, COLUMN_DATE + " = ? ", new String[] { String.valueOf(md.getDate()) }, null, null, null);
+		if (mCursor.getCount() > 0)
+			throw new Exception ("Dublicate entry");
 		ContentValues cv=new ContentValues();
 		cv.put(COLUMN_DATE, md.getDate());
 		cv.put(COLUMN_TITLE, md.getTitle());
 		cv.put(COLUMN_ICON, md.getIcon());
+		long result = mDataBase.insert(TABLE_NAME, null, cv);
+		mDataBase.close();
 		
-		return mDataBase.insert(TABLE_NAME, null, cv);
+		return result;
 	}
 	
-	public int update(OneEntry md) {
+	public int update(OneEntry md) throws Exception {
+		
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		
+		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[] {COLUMN_ID}, COLUMN_ID + " <> ? AND " + COLUMN_DATE + " = ? ", new String[] { String.valueOf(md.getID()), String.valueOf(md.getDate()) }, null, null, null);
+		if (mCursor.getCount() > 0)
+			throw new Exception ("Dublicate entry");
+		
 		ContentValues cv=new ContentValues();
 		cv.put(COLUMN_DATE, md.getDate());
 		cv.put(COLUMN_TITLE, md.getTitle());
 		cv.put(COLUMN_ICON, md.getIcon());
-		return mDataBase.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[] { String.valueOf(md.getID()) });
+		int result = mDataBase.update(TABLE_NAME, cv, COLUMN_ID + " = ?", new String[] { String.valueOf(md.getID()) });
+		mDataBase.close();
+		return result;
 	}
 	
 	public void deleteAll() {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
 		mDataBase.delete(TABLE_NAME, null, null);
+		mDataBase.close();
 	}
 	
 	public void delete(long id) {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
 		mDataBase.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
+		mDataBase.close();
 	}
 	
 	public OneEntry select(long id) {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME, null, COLUMN_ID + " = ?", new String[] { String.valueOf(id) }, null, null, COLUMN_DATE);
 		
 		mCursor.moveToFirst();
 		long date = mCursor.getLong(NUM_COLUMN_DATE);
 		String title = mCursor.getString(NUM_COLUMN_TITLE);
 		int icon = mCursor.getInt(NUM_COLUMN_ICON);
+		mDataBase.close();
 		return new OneEntry(id, date, title, icon);
 	}
 	
 	public ArrayList<OneEntry> selectAll() {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME, null, null, null, null, null, COLUMN_DATE);
-		
 		ArrayList<OneEntry> arr = new ArrayList<OneEntry>();
 		mCursor.moveToFirst();
 		long prevDate = -1;
@@ -94,15 +114,16 @@ public class DBConnector {
 			} while (mCursor.moveToNext());
 		}
 		Collections.reverse(arr);
+		mDataBase.close();
 		return arr;
 	}
 	
 	public int selectAvg() {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[]{COLUMN_DATE}, null, null, null, null, COLUMN_DATE);
 		// если дат еще нет, или только одна, то период высчитать не можем
 		if (mCursor.getCount() < 2)
 			return -1;
-		
 		mCursor.moveToFirst();
 		long prevDate = -1;
 		int sum = 0;
@@ -117,16 +138,18 @@ public class DBConnector {
 			} while (mCursor.moveToNext());
 		}
 		int avg = sum / (mCursor.getCount() - 1);
+		mDataBase.close();
 		return avg;
 	}
 	
 	public long selectMaxDate() {
-		
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		String query = "SELECT MAX(" + COLUMN_DATE  + ") FROM " + TABLE_NAME;
 	    Cursor mCursor = mDataBase.rawQuery(query, null);
-	    
-		mCursor.moveToFirst();
-		return mCursor.getLong(0);
+	    mCursor.moveToFirst();
+	    long res = mCursor.getLong(0);
+		mDataBase.close();
+		return res;
 	}
 	
 	private class OpenHelper extends SQLiteOpenHelper {

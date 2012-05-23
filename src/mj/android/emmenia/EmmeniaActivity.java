@@ -50,8 +50,11 @@ public class EmmeniaActivity extends Activity {
         setContentView(R.layout.main);
         Log.w("MY", "EmmeniaActivity");
         
-        mContext = this;        
-        mDBConnector = new DBConnector (this);
+        mContext = this;
+        EmmeniaApp mApp = ((EmmeniaApp) getApplicationContext());
+        mApp.connectToDataBase();
+        
+        mDBConnector = mApp.getmDBConnector();
         
         // Следующая дата
         mNextDate = (TextView)findViewById(R.id.nextDate);
@@ -118,12 +121,10 @@ public class EmmeniaActivity extends Activity {
     private int getPeriod () {
     	// Настройки
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        Log.w("MY", "-1-");
         boolean prefAutoCalc = settings.getBoolean("autoCalc", true);
         Log.w("MY", "prefAutoCalc: " + prefAutoCalc);
         if (prefAutoCalc)
         	return mDBConnector.selectAvg();
-        Log.w("MY", "-2-");
         Integer prefPeriod = Integer.getInteger(settings.getString("period", null));
         Log.w("MY", "prefPeriod: " + prefPeriod);
         if (prefPeriod != null && prefPeriod > 0)
@@ -192,11 +193,11 @@ public class EmmeniaActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
         if (resultCode == Activity.RESULT_OK) {
-        	OneEntry md = (OneEntry) data.getExtras().getSerializable("OneEntry");
+        	/*OneEntry md = (OneEntry) data.getExtras().getSerializable("OneEntry");
         	if (requestCode == UPDATE_ACTIVITY)
         		mDBConnector.update(md);
         	else
-        		mDBConnector.insert(md);
+        		mDBConnector.insert(md);*/
         	updateData();
         }        
     }
