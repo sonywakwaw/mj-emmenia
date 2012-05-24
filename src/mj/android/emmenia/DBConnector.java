@@ -52,7 +52,6 @@ public class DBConnector {
 	}
 	
 	public int update(OneEntry md) throws Exception {
-		
 		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
 		
 		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[] {COLUMN_ID}, COLUMN_ID + " <> ? AND " + COLUMN_DATE + " = ? ", new String[] { String.valueOf(md.getID()), String.valueOf(md.getDate()) }, null, null, null);

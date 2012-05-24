@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -193,11 +195,6 @@ public class EmmeniaActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
         if (resultCode == Activity.RESULT_OK) {
-        	/*OneEntry md = (OneEntry) data.getExtras().getSerializable("OneEntry");
-        	if (requestCode == UPDATE_ACTIVITY)
-        		mDBConnector.update(md);
-        	else
-        		mDBConnector.insert(md);*/
         	updateData();
         }        
     }
