@@ -1,12 +1,9 @@
 package mj.android.emmenia;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -18,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -26,28 +22,19 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class EmmeniaActivity extends Activity {
+public class Phases extends Activity {
 	
 	DBConnector mDBConnector;
 	Context mContext;
 	ListView mListView;
-	TextView mNextDate;
-	TextView mCurDay;
-	ImageView mIconState;
 	myListAdapter mAdapter;
-	Button mButStat, mButAdd;
-	
-	int ADD_ACTIVITY = 0;
-	int UPDATE_ACTIVITY = 1;
-	
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	Button mButAdd;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        Log.w("MY", "EmmeniaActivity");
+        setContentView(R.layout.phase);
         
         mContext = this;
         EmmeniaApp mApp = ((EmmeniaApp) getApplicationContext());
@@ -55,31 +42,15 @@ public class EmmeniaActivity extends Activity {
         
         mDBConnector = mApp.getmDBConnector();
         
-        // Следующая дата
-        mNextDate = (TextView)findViewById(R.id.nextDate);
-        mCurDay = (TextView)findViewById(R.id.curDay);
-        mIconState = (ImageView)findViewById(R.id.iconState);
-        
-        mCurDay.setText(getCurrentDay());
-        mNextDate.setText(getNextDate());
-        
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
-        mAdapter.setArrayMyData(mDBConnector.selectAll());
+//        mAdapter.setArrayMyData(mDBConnector.selectAll());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         
         // Кнопки
-        mButStat = (Button)findViewById(R.id.but_stat);
         mButAdd = (Button)findViewById(R.id.but_add);
-        
-        mButStat.setOnClickListener (new OnClickListener() {
-            @Override
-			public void onClick(View v) {
-            	actionStat();
-            }
-         });
         
         mButAdd.setOnClickListener (new OnClickListener() {
             @Override
@@ -89,46 +60,9 @@ public class EmmeniaActivity extends Activity {
          });
     }
     
-    private void actionStat() {
-    	
-    }
-    
     private void actionAdd() {
     	Intent i = new Intent(mContext, AddUpdateActivity.class);
-    	startActivityForResult (i, ADD_ACTIVITY);
-    }
-    
-    private String getCurrentDay() {
-    	long today = (new Date()).getTime();
-        long lastDay = mDBConnector.selectMaxDate();
-
-        if (today < lastDay || lastDay == 0)
-        	return getString (R.string.no_period);
-        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24) + 1);
-    }
-    
-    private String getNextDate() {
-        long lastDay = mDBConnector.selectMaxDate();
-        int period = getPeriod ();
-        Log.w("MY", "period " + period);
-        if (period < 0 || lastDay < 0)
-        	return getString (R.string.no_date);
-        lastDay += (long)period * 24 * 60 * 60 * 1000;
-        return DATE_FORMAT.format(new Date (lastDay));
-    }
-    
-    private int getPeriod () {
-    	// Настройки
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean prefAutoCalc = settings.getBoolean("autoCalc", true);
-        Log.w("MY", "prefAutoCalc: " + prefAutoCalc);
-        if (prefAutoCalc)
-        	return mDBConnector.selectAvg();
-        Integer prefPeriod = Integer.getInteger(settings.getString("period", null));
-        Log.w("MY", "prefPeriod: " + prefPeriod);
-        if (prefPeriod != null && prefPeriod > 0)
-        	return prefPeriod;
-        return -1;    	
+    	startActivityForResult (i, 0);
     }
     
     @Override 
@@ -146,7 +80,7 @@ public class EmmeniaActivity extends Activity {
     		Intent i = new Intent(mContext, AddUpdateActivity.class);
     		OneEntry md = mDBConnector.select(info.id);
     		i.putExtra("OneEntry", md);
-        	startActivityForResult (i, UPDATE_ACTIVITY);
+        	startActivityForResult (i, 0);
         	break;
     	case R.id.delete:
     		mDBConnector.delete (info.id);
@@ -161,7 +95,7 @@ public class EmmeniaActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.phase_menu, menu);
         return true; 
     }
     
@@ -172,15 +106,6 @@ public class EmmeniaActivity extends Activity {
 	        case R.id.add:
 	        	actionAdd();
             	break;
-            case R.id.stat:
-            	actionStat();
-            	break;
-            case R.id.settings:
-            	startActivity(new Intent(mContext, Preferences.class));
-            	break;
-            case R.id.exit:
-                finish();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -199,9 +124,6 @@ public class EmmeniaActivity extends Activity {
     private void updateData () {
     	mAdapter.setArrayMyData(mDBConnector.selectAll());
     	mAdapter.notifyDataSetChanged();
-    	
-    	mCurDay.setText(getCurrentDay());
-        mNextDate.setText(getNextDate());
     }
         
     class myListAdapter extends BaseAdapter {
@@ -249,7 +171,7 @@ public class EmmeniaActivity extends Activity {
     		 
     		
     		OneEntry md = arrayMyData.get(position);    			
-   			vDate.setText(DATE_FORMAT.format(md.getDate()));
+   			//vDate.setText(DATE_FORMAT.format(md.getDate()));
    			vTitle.setText(md.getTitle());
    			vIcon.setImageResource(md.getIcon());
    			int days = md.getDays();

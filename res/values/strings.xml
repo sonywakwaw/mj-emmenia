@@ -22,9 +22,14 @@
     <string name="day">День:</string>
     <string name="prefTitle">Emmenia: Настройки</string>
     <string name="prefCommon">Общие</string>
+    <string name="prefAdditional">Дополнительные</string>
     <string name="autoCalc">Расчитывать период</string>
     <string name="autoCalcSum">Автоматический расчет периода</string>
     <string name="period">Точный период</string>
-    <string name="Additional">Дополнительные даты</string>
-    <string name="AdditionalSummary">Дополнительные даты цикла</string>
+    <string name="Additional">Фазы цикла</string>
+    <string name="phasedate">Дни цикла с</string>
+    <string name="to">по</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
+    <string name="description">Описание</string>
 </resources>

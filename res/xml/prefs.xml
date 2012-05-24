@@ -22,10 +22,13 @@
 			android:maxLength="2"
 			 
 			 />
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+		android:title="@string/prefAdditional">
 		<Preference
 			 android:key="additional"
 			 android:title="@string/Additional"
-			 android:summary="@string/AdditionalSummary"
 			/>
     </PreferenceCategory> 
 </PreferenceScreen>

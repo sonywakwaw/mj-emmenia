@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:orientation="vertical" > 
+
+	<LinearLayout 
+		android:id="@+id/buttons" 
+		android:orientation="horizontal" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:layout_alignParentBottom="true" > 
+		<Button
+	        android:id="@+id/butSave"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/save"
+	    />
+		
+		<Button
+	        android:id="@+id/butCancel"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:text="@string/cancel"
+	    />
+		
+	</LinearLayout> 
+	
+	<ScrollView 
+		android:layout_above="@id/buttons" 
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent" 
+		android:fillViewport="true">
+		 
+		<LinearLayout 
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content" 
+			android:orientation="vertical" 
+			> 
+		
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/phasedate"
+				style="@style/TextStyle"
+			/>
+			
+			<LinearLayout 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:orientation="horizontal" 
+				android:gravity="center">
+				
+			    <Button
+			        android:id="@+id/butSinceMinus"
+			        android:layout_width="50dp"
+			        android:layout_height="50dp"
+			        android:layout_gravity="center"
+			        android:text="@string/minus"
+			    />
+
+			    <EditText
+			        android:id="@+id/SinceDay"
+			        android:layout_width="100dp"
+			        android:layout_height="50dp"
+			     	android:layout_gravity="center"
+			        android:inputType="number"
+			        android:maxLength="2" >
+			    </EditText>
+
+			    <Button
+			        android:id="@+id/butSincePlus"
+			        android:layout_width="50dp"
+			        android:layout_height="50dp"
+			        android:layout_gravity="center"
+			        android:text="@string/plus"
+			    />
+			</LinearLayout>
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/to"
+				style="@style/TextStyle"
+			/>
+			
+			<LinearLayout 
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content" 
+				android:orientation="horizontal" 
+				android:gravity="center">
+				
+			    <Button
+			        android:id="@+id/butToMinus"
+			        android:layout_width="50dp"
+			        android:layout_height="50dp"
+			        android:layout_gravity="center"
+			        android:text="@string/minus"
+			    />
+
+			    <EditText
+			        android:id="@+id/ToDay"
+			        android:layout_width="100dp"
+			        android:layout_height="50dp"
+			     	android:layout_gravity="center"
+			        android:inputType="number"
+			        android:maxLength="2" >
+			    </EditText>
+
+			    <Button
+			        android:id="@+id/butToPlus"
+			        android:layout_width="50dp"
+			        android:layout_height="50dp"
+			        android:layout_gravity="center"
+			        android:text="@string/plus"
+			    />
+			</LinearLayout>
+						
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/description"
+				style="@style/TextStyle"
+			/>
+		
+			<EditText
+				android:id="@+id/DescText"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/entertext"
+			/>
+		
+		</LinearLayout> 
+	</ScrollView> 
+</RelativeLayout>
