@@ -54,7 +54,7 @@
 				android:gravity="center">
 				
 			    <Button
-			        android:id="@+id/butSinceMinus"
+			        android:id="@+id/butFromMinus"
 			        android:layout_width="50dp"
 			        android:layout_height="50dp"
 			        android:layout_gravity="center"
@@ -62,7 +62,7 @@
 			    />
 
 			    <EditText
-			        android:id="@+id/SinceDay"
+			        android:id="@+id/FromDay"
 			        android:layout_width="100dp"
 			        android:layout_height="50dp"
 			     	android:layout_gravity="center"
@@ -71,7 +71,7 @@
 			    </EditText>
 
 			    <Button
-			        android:id="@+id/butSincePlus"
+			        android:id="@+id/butFromPlus"
 			        android:layout_width="50dp"
 			        android:layout_height="50dp"
 			        android:layout_gravity="center"
@@ -130,6 +130,19 @@
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:hint="@string/entertext"
+			/>
+			
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/iconphase"
+				style="@style/TextStyle"
+			/>
+			
+			<Gallery  
+				android:id="@+id/gallery"  
+				android:layout_width="fill_parent"  
+				android:layout_height="wrap_content"
 			/>
 		
 		</LinearLayout> 

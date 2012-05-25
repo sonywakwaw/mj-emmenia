@@ -35,6 +35,16 @@
             android:name=".Preferences"
             android:label="@string/prefTitle" >
         </activity>
+        
+        <activity
+            android:name=".Phases"
+            android:label="@string/prefTitle" >
+        </activity>
+        
+        <activity
+            android:name=".AddPhases"
+            android:label="@string/prefTitle" >
+        </activity>
     </application>
 
 </manifest>

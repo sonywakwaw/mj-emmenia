@@ -1,5 +1,7 @@
 package mj.android.emmenia;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -13,12 +15,15 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
 	CheckBoxPreference autoCalc;
 	EditTextPreference period;
 	Preference additional;
+	Context mContext;
 	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
+        
+        mContext = this;
         
         autoCalc = (CheckBoxPreference)this.findPreference("autoCalc");
         period = (EditTextPreference)this.findPreference("period");
@@ -33,8 +38,8 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         
         additional.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-            //handle action on click here
-            	Log.w("MY", "asasasasasasasasas");
+            	Intent i = new Intent(mContext, Phases.class);
+            	startActivityForResult (i, 0);
             	return true;
             }
         });

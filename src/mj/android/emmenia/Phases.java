@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -45,7 +44,7 @@ public class Phases extends Activity {
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
-//        mAdapter.setArrayMyData(mDBConnector.selectAll());
+        mAdapter.setArrayMyData(mDBConnector.selectAllPhase());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         
@@ -61,7 +60,7 @@ public class Phases extends Activity {
     }
     
     private void actionAdd() {
-    	Intent i = new Intent(mContext, AddUpdateActivity.class);
+    	Intent i = new Intent(mContext, AddPhases.class);
     	startActivityForResult (i, 0);
     }
     
@@ -77,7 +76,7 @@ public class Phases extends Activity {
     	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
     	switch(item.getItemId()) {
     	case R.id.edit:
-    		Intent i = new Intent(mContext, AddUpdateActivity.class);
+    		Intent i = new Intent(mContext, AddPhases.class);
     		OneEntry md = mDBConnector.select(info.id);
     		i.putExtra("OneEntry", md);
         	startActivityForResult (i, 0);
@@ -122,19 +121,19 @@ public class Phases extends Activity {
     }
     
     private void updateData () {
-    	mAdapter.setArrayMyData(mDBConnector.selectAll());
+    	mAdapter.setArrayMyData(mDBConnector.selectAllPhase());
     	mAdapter.notifyDataSetChanged();
     }
         
     class myListAdapter extends BaseAdapter {
     	private LayoutInflater mLayoutInflater;
-    	private ArrayList<OneEntry> arrayMyData;
+    	private ArrayList<OnePhase> arrayMyData;
     	    	
     	public myListAdapter (Context ctx) {
     		mLayoutInflater = LayoutInflater.from(ctx);
     	}
     	
-		public void setArrayMyData(ArrayList<OneEntry> arrayMyData) {
+		public void setArrayMyData(ArrayList<OnePhase> arrayMyData) {
 			this.arrayMyData = arrayMyData;
 		}
     	
@@ -150,9 +149,9 @@ public class Phases extends Activity {
     		
     	@Override
 		public long getItemId (int position) {
-    		OneEntry md = arrayMyData.get(position);
-    		if (md != null) {
-    			return md.getID();
+    		OnePhase op = arrayMyData.get(position);
+    		if (op != null) {
+    			return op.getID();
     		}
     		return 0;
     	}
@@ -161,24 +160,19 @@ public class Phases extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) { 
    		
     		if (convertView == null)
-    			convertView = mLayoutInflater.inflate(R.layout.item, null);
+    			convertView = mLayoutInflater.inflate(R.layout.item_phase, null);
     		
     		ImageView vIcon = (ImageView)convertView.findViewById(R.id.Icon);
-    		TextView vTitle = (TextView)convertView.findViewById(R.id.Title);
-    		TextView vDate = (TextView)convertView.findViewById(R.id.Date);
-    		TextView vDays = (TextView)convertView.findViewById(R.id.Days);
+    		TextView vPeriod = (TextView)convertView.findViewById(R.id.Period);
+    		TextView vDesc = (TextView)convertView.findViewById(R.id.Desc);
     		
-    		 
+    		OnePhase op = arrayMyData.get(position);    			
+   			
+    		vIcon.setImageResource(op.getIcon());
+    		vDesc.setText(op.getDesc());
     		
-    		OneEntry md = arrayMyData.get(position);    			
-   			//vDate.setText(DATE_FORMAT.format(md.getDate()));
-   			vTitle.setText(md.getTitle());
-   			vIcon.setImageResource(md.getIcon());
-   			int days = md.getDays();
-   			if (days < 0)
-   				vDays.setText("-");
-   			else
-   				vDays.setText(String.valueOf(days));
+    		String period = "с " + op.getFrom() + " по " + op.getTo();
+    		vPeriod.setText(period);
     			
     		return convertView;
     	}

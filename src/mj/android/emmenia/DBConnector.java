@@ -16,6 +16,7 @@ public class DBConnector {
 	private static final String DATABASE_NAME = "emmenia.db";
 	private static final int DATABASE_VERSION = 1;
 	private static final String TABLE_NAME = "Emmenia";
+	private static final String TABLE_NAME_PHASE = "Phase";
 	
 	// Название столбцов
 	private static final String COLUMN_ID = "_id";
@@ -23,11 +24,23 @@ public class DBConnector {
 	private static final String COLUMN_TITLE = "Title";
 	private static final String COLUMN_ICON = "Icon";
 	
+	private static final String P_COLUMN_ID = "_id";
+	private static final String P_COLUMN_FROM = "DayFrom";
+	private static final String P_COLUMN_TO = "DayTo";
+	private static final String P_COLUMN_DESC = "Description";
+	private static final String P_COLUMN_ICON = "Icon";
+	
 	// Номера столбцов
 	private static final int NUM_COLUMN_ID = 0;
 	private static final int NUM_COLUMN_DATE = 1;
 	private static final int NUM_COLUMN_TITLE = 2;
 	private static final int NUM_COLUMN_ICON = 3;
+	
+	private static final int P_NUM_COLUMN_ID = 0;
+	private static final int P_NUM_COLUMN_FROM = 1;
+	private static final int P_NUM_COLUMN_TO = 2;
+	private static final int P_NUM_COLUMN_DESC = 3;
+	private static final int P_NUM_COLUMN_ICON = 4;
 	
 	private OpenHelper mOpenHelper;
 
@@ -117,6 +130,26 @@ public class DBConnector {
 		return arr;
 	}
 	
+	public ArrayList<OnePhase> selectAllPhase() {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, null, null, null, null, P_COLUMN_FROM);
+		ArrayList<OnePhase> arr = new ArrayList<OnePhase>();
+		mCursor.moveToFirst();
+		if (!mCursor.isAfterLast()) {
+			do {
+				long id = mCursor.getLong(P_NUM_COLUMN_ID);
+				int from = mCursor.getInt(P_NUM_COLUMN_FROM);
+				int to = mCursor.getInt(P_NUM_COLUMN_TO);
+				String desc = mCursor.getString(P_NUM_COLUMN_DESC);
+				int icon = mCursor.getInt(P_NUM_COLUMN_ICON);
+				OnePhase op = new OnePhase(id, from, to, desc, icon);				
+				arr.add(op);
+			} while (mCursor.moveToNext());
+		}
+		mDataBase.close();
+		return arr;
+	}
+	
 	public int selectAvg() {
 		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[]{COLUMN_DATE}, null, null, null, null, COLUMN_DATE);
@@ -158,12 +191,32 @@ public class DBConnector {
 		}
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			
+			// Основная таблица
 			String query = "CREATE TABLE " + TABLE_NAME + " (" + 
 					COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
 					COLUMN_DATE + " LONG, " + 
 					COLUMN_TITLE + " TEXT, " + 
 					COLUMN_ICON + " INTEGER); ";
 			db.execSQL(query);
+			
+			// Таблица с фазами
+			query = "CREATE TABLE " + TABLE_NAME_PHASE + " (" + 
+					P_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
+					P_COLUMN_FROM + " INTEGER, " + 
+					P_COLUMN_TO + " INTEGER, " + 
+					P_COLUMN_DESC + " TEXT, " + 
+					P_COLUMN_ICON + " INTEGER); ";
+			db.execSQL(query);
+			
+			// Добавляем начальные данные
+			String prefix = "INSERT INTO " + TABLE_NAME_PHASE + " (" + P_COLUMN_FROM + ", " + 
+					P_COLUMN_TO + ", " + P_COLUMN_DESC + ", " + P_COLUMN_ICON + ") values ";
+			db.execSQL(prefix + " (1, 4, \"Менструация\", " + R.drawable.i_yellow + ");");
+			db.execSQL(prefix + " (5, 10, \"Безопасный секс\", " + R.drawable.i_green + ");");
+			db.execSQL(prefix + " (11, 15, \"Овуляция\", " + R.drawable.i_blue + ");");
+			db.execSQL(prefix + " (16, 23, \"Условно безопасный секс\", " + R.drawable.i_l_green + ");");
+			db.execSQL(prefix + " (24, 28, \"ПМС\", " + R.drawable.i_red + ");");
 		}
 		
 		@Override
