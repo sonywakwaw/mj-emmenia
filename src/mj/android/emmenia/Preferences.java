@@ -23,6 +23,8 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
         
+        Log.w("MY", "Preferences");
+        
         mContext = this;
         
         autoCalc = (CheckBoxPreference)this.findPreference("autoCalc");

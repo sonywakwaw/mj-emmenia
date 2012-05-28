@@ -77,12 +77,12 @@ public class Phases extends Activity {
     	switch(item.getItemId()) {
     	case R.id.edit:
     		Intent i = new Intent(mContext, AddPhases.class);
-    		OneEntry md = mDBConnector.select(info.id);
-    		i.putExtra("OneEntry", md);
+    		OnePhase op = mDBConnector.selectPhase(info.id);
+    		i.putExtra("OnePhase", op);
         	startActivityForResult (i, 0);
         	break;
     	case R.id.delete:
-    		mDBConnector.delete (info.id);
+    		mDBConnector.deletePhase (info.id);
     		break;
     	default:
     		return super.onContextItemSelected(item);
@@ -104,6 +104,9 @@ public class Phases extends Activity {
         switch (item.getItemId()) {
 	        case R.id.add:
 	        	actionAdd();
+            	break;
+	        case R.id.del:
+	        	mDBConnector.deleteAllPhase ();
             	break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -167,7 +170,7 @@ public class Phases extends Activity {
     		TextView vDesc = (TextView)convertView.findViewById(R.id.Desc);
     		
     		OnePhase op = arrayMyData.get(position);    			
-   			
+
     		vIcon.setImageResource(op.getIcon());
     		vDesc.setText(op.getDesc());
     		

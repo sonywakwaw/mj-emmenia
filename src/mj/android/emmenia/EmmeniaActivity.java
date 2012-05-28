@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -33,6 +34,7 @@ public class EmmeniaActivity extends Activity {
 	ListView mListView;
 	TextView mNextDate;
 	TextView mCurDay;
+	TextView mPhase;
 	ImageView mIconState;
 	myListAdapter mAdapter;
 	Button mButStat, mButAdd;
@@ -58,15 +60,24 @@ public class EmmeniaActivity extends Activity {
         // Следующая дата
         mNextDate = (TextView)findViewById(R.id.nextDate);
         mCurDay = (TextView)findViewById(R.id.curDay);
+        mPhase = (TextView)findViewById(R.id.phase);
         mIconState = (ImageView)findViewById(R.id.iconState);
         
-        mCurDay.setText(getCurrentDay());
+        /*int day = getCurrentDay();
+        
+        if (day > 0)
+        	mCurDay.setText(String.valueOf(day));
         mNextDate.setText(getNextDate());
         
+        Pair<String, Integer> pair = mDBConnector.selectPhaseName(day);
+        mPhase.setText(pair.first);
+        if (pair.second > 0)
+        	mIconState.setImageResource(pair.second);
+        */
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
-        mAdapter.setArrayMyData(mDBConnector.selectAll());
+        //mAdapter.setArrayMyData(mDBConnector.selectAll());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         
@@ -87,6 +98,8 @@ public class EmmeniaActivity extends Activity {
             	actionAdd();
             }
          });
+        
+        updateData();
     }
     
     private void actionStat() {
@@ -98,13 +111,13 @@ public class EmmeniaActivity extends Activity {
     	startActivityForResult (i, ADD_ACTIVITY);
     }
     
-    private String getCurrentDay() {
+    private int getCurrentDay() {
     	long today = (new Date()).getTime();
         long lastDay = mDBConnector.selectMaxDate();
 
         if (today < lastDay || lastDay == 0)
-        	return getString (R.string.no_period);
-        return String.valueOf(((today - lastDay) / 1000 / 60 / 60 / 24) + 1);
+        	return -1;
+        return (int)((today - lastDay) / 1000 / 60 / 60 / 24) + 1;
     }
     
     private String getNextDate() {
@@ -200,8 +213,21 @@ public class EmmeniaActivity extends Activity {
     	mAdapter.setArrayMyData(mDBConnector.selectAll());
     	mAdapter.notifyDataSetChanged();
     	
-    	mCurDay.setText(getCurrentDay());
+    	int day = getCurrentDay();
+        
+        if (day > 0)
+        	mCurDay.setText(String.valueOf(day));
         mNextDate.setText(getNextDate());
+        
+        Pair<String, Integer> pair = mDBConnector.selectPhaseName(day);
+        mPhase.setText(pair.first);
+        if (pair.second > 0)
+        	mIconState.setImageResource(pair.second);
+        else
+        	mIconState.setImageResource(android.R.color.transparent);
+                	
+        
+        
     }
         
     class myListAdapter extends BaseAdapter {
@@ -210,6 +236,7 @@ public class EmmeniaActivity extends Activity {
     	    	
     	public myListAdapter (Context ctx) {
     		mLayoutInflater = LayoutInflater.from(ctx);
+    		arrayMyData = new ArrayList<OneEntry> ();
     	}
     	
 		public void setArrayMyData(ArrayList<OneEntry> arrayMyData) {

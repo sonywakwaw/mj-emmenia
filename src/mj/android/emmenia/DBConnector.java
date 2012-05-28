@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.Pair;
 
 public class DBConnector {
 	
@@ -130,26 +131,6 @@ public class DBConnector {
 		return arr;
 	}
 	
-	public ArrayList<OnePhase> selectAllPhase() {
-		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
-		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, null, null, null, null, P_COLUMN_FROM);
-		ArrayList<OnePhase> arr = new ArrayList<OnePhase>();
-		mCursor.moveToFirst();
-		if (!mCursor.isAfterLast()) {
-			do {
-				long id = mCursor.getLong(P_NUM_COLUMN_ID);
-				int from = mCursor.getInt(P_NUM_COLUMN_FROM);
-				int to = mCursor.getInt(P_NUM_COLUMN_TO);
-				String desc = mCursor.getString(P_NUM_COLUMN_DESC);
-				int icon = mCursor.getInt(P_NUM_COLUMN_ICON);
-				OnePhase op = new OnePhase(id, from, to, desc, icon);				
-				arr.add(op);
-			} while (mCursor.moveToNext());
-		}
-		mDataBase.close();
-		return arr;
-	}
-	
 	public int selectAvg() {
 		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME, new String[]{COLUMN_DATE}, null, null, null, null, COLUMN_DATE);
@@ -182,6 +163,126 @@ public class DBConnector {
 	    long res = mCursor.getLong(0);
 		mDataBase.close();
 		return res;
+	}
+	
+	/// **************************************
+	/// *****      PHASE     *****************
+	/// **************************************
+	
+	public ArrayList<OnePhase> selectAllPhase() {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, null, null, null, null, P_COLUMN_FROM);
+		ArrayList<OnePhase> arr = new ArrayList<OnePhase>();
+		mCursor.moveToFirst();
+		if (!mCursor.isAfterLast()) {
+			do {
+				long id = mCursor.getLong(P_NUM_COLUMN_ID);
+				int from = mCursor.getInt(P_NUM_COLUMN_FROM);
+				int to = mCursor.getInt(P_NUM_COLUMN_TO);
+				String desc = mCursor.getString(P_NUM_COLUMN_DESC);
+				int icon = mCursor.getInt(P_NUM_COLUMN_ICON);
+				OnePhase op = new OnePhase(id, from, to, desc, icon);				
+				arr.add(op);
+			} while (mCursor.moveToNext());
+		}
+		mDataBase.close();
+		return arr;
+	}
+	
+	public long insertPhase (OnePhase op) throws Exception {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, new String[] {COLUMN_ID}, 
+				"(" + P_COLUMN_FROM + " >= ? AND " + P_COLUMN_FROM + " <= ?) OR " + 
+				"(" + P_COLUMN_TO + " >= ? AND " + P_COLUMN_TO + " <= ?) OR " +
+				"(" + P_COLUMN_FROM + " <= ? AND " + P_COLUMN_TO + " >= ?)",
+				new String[] { String.valueOf(op.getFrom()), String.valueOf(op.getTo()), 
+				String.valueOf(op.getFrom()), String.valueOf(op.getTo()), 
+				String.valueOf(op.getFrom()), String.valueOf(op.getTo())}, null, null, null);
+		if (mCursor.getCount() > 0)
+			throw new Exception ("Dublicate entry");
+		
+		ContentValues cv=new ContentValues();
+		cv.put(P_COLUMN_FROM, op.getFrom());
+		cv.put(P_COLUMN_TO, op.getTo());
+		cv.put(P_COLUMN_DESC, op.getDesc());
+		cv.put(P_COLUMN_ICON, op.getIcon());
+		long result = mDataBase.insert(TABLE_NAME_PHASE, null, cv);
+		mDataBase.close();
+		
+		return result;
+	}
+	
+	public int updatePhase(OnePhase op) throws Exception {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, new String[] {COLUMN_ID}, 
+				"((" + P_COLUMN_FROM + " >= ? AND " + P_COLUMN_FROM + " <= ?) OR " + 
+				"(" + P_COLUMN_TO + " >= ? AND " + P_COLUMN_TO + " <= ?) OR " +
+				"(" + P_COLUMN_FROM + " <= ? AND " + P_COLUMN_TO + " >= ?)) AND " + 
+				P_COLUMN_ID + " <> ?",
+				new String[] { String.valueOf(op.getFrom()), String.valueOf(op.getTo()), 
+				String.valueOf(op.getFrom()), String.valueOf(op.getTo()), 
+				String.valueOf(op.getFrom()), String.valueOf(op.getTo()), String.valueOf(op.getID())}, null, null, null);
+		
+		if (mCursor.getCount() > 0)
+			throw new Exception ("Dublicate entry");
+		
+		ContentValues cv=new ContentValues();
+		cv.put(P_COLUMN_FROM, op.getFrom());
+		cv.put(P_COLUMN_TO, op.getTo());
+		cv.put(P_COLUMN_DESC, op.getDesc());
+		cv.put(P_COLUMN_ICON, op.getIcon());
+		int result = mDataBase.update(TABLE_NAME_PHASE, cv, COLUMN_ID + " = ?", new String[] { String.valueOf(op.getID()) });
+		mDataBase.close();
+		return result;
+	}
+	
+	public void deletePhase(long id) {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		mDataBase.delete(TABLE_NAME_PHASE, P_COLUMN_ID + " = ?", new String[] { String.valueOf(id) });
+		mDataBase.close();
+	}
+	
+	public OnePhase selectPhase(long id) {
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, P_COLUMN_ID + " = ?", new String[] { String.valueOf(id) }, null, null, null);
+		
+		mCursor.moveToFirst();
+		int from = mCursor.getInt(P_NUM_COLUMN_FROM);
+		int to = mCursor.getInt(P_NUM_COLUMN_TO);
+		String desc = mCursor.getString(P_NUM_COLUMN_DESC);
+		int icon = mCursor.getInt(P_NUM_COLUMN_ICON);
+		mDataBase.close();
+		return new OnePhase(id, from, to, desc, icon);
+	}
+	
+	public void deleteAllPhase() {
+		SQLiteDatabase mDataBase = mOpenHelper.getWritableDatabase();
+		mDataBase.delete(TABLE_NAME_PHASE, null, null);
+		mDataBase.close();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Pair<String, Integer> selectPhaseName(int day) {
+		Log.w("MY", "day: " + day);
+		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
+		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, P_COLUMN_FROM + " <= ? AND " + P_COLUMN_TO + " >= ?", new String[] { String.valueOf(day), String.valueOf(day) }, null, null, null);
+
+		Log.w("MY", "count: " + mCursor.getCount());
+		
+		int icon = -1;
+		String desc = "";
+		
+		if (mCursor.getCount() > 0) {
+			mCursor.moveToFirst();
+			desc = mCursor.getString(P_NUM_COLUMN_DESC);
+			icon = mCursor.getInt(P_NUM_COLUMN_ICON);
+		}
+		mDataBase.close();
+		
+		Pair <String, Integer> pair = new Pair (desc, icon);
+		return pair;
 	}
 	
 	private class OpenHelper extends SQLiteOpenHelper {

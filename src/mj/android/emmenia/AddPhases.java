@@ -34,6 +34,8 @@ public class AddPhases extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_phase);
         
+        Log.w("MY", "AddPhases");
+        
         mContext = this;
         EmmeniaApp mApp = ((EmmeniaApp)this.getApplication());
         mDBConnector = mApp.getmDBConnector();
@@ -50,12 +52,10 @@ public class AddPhases extends Activity  {
         
         if (getIntent().hasExtra("OnePhase")) {
         	OnePhase op = (OnePhase) getIntent().getSerializableExtra("OnePhase");
-        	
         	mDayFrom.setText(String.valueOf(op.getFrom()));
         	mDayTo.setText(String.valueOf(op.getTo()));
         	mTextView.setText(op.getDesc());
         	mGallery.setSelection(mImageAdapter.getPositionbyResId(op.getIcon()));
-        	
         	PhaseID = op.getID();
         }
         else {
@@ -87,7 +87,7 @@ public class AddPhases extends Activity  {
         butFromPlus.setOnClickListener (new OnClickListener() {
             @Override
 			public void onClick(View v) {
-            	int i = 1;
+            	int i = 0;
             	try {
             		i = Integer.parseInt(mDayFrom.getText().toString());
             	}
@@ -117,7 +117,7 @@ public class AddPhases extends Activity  {
         butToPlus.setOnClickListener (new OnClickListener() {
             @Override
 			public void onClick(View v) {
-            	int i = 1;
+            	int i = 0;
             	try {
             		i = Integer.parseInt(mDayTo.getText().toString());
             	}
@@ -136,25 +136,19 @@ public class AddPhases extends Activity  {
         butSave.setOnClickListener (new OnClickListener() {
             @Override
 			public void onClick(View v) {
-           		OnePhase op = new OnePhase (PhaseID, Integer.parseInt((String)mDayFrom.getText()),
-           				Integer.parseInt((String)mDayTo.getText()), mTextView.getText().toString(), mImageAdapter.getResourceId(mGallery.getSelectedItemPosition()));
-           		           		
-           		try {
-            	/*if (PhaseID > 0)
-					mDBConnector.update(op);
-				else
-            		mDBConnector.insert(op);*/
+            	
+            	if (Integer.parseInt(mDayFrom.getText().toString()) > Integer.parseInt(mDayTo.getText().toString()))
+            		showAlert ("День 'c' должен быть меньше чем 'по'");
+           		OnePhase op = new OnePhase (PhaseID, Integer.parseInt(mDayFrom.getText().toString()),
+           				Integer.parseInt(mDayTo.getText().toString()), mTextView.getText().toString(), mImageAdapter.getResourceId(mGallery.getSelectedItemPosition()));
+           		Log.w("MY", "Phase: " + PhaseID);          		
+           		try {           			
+	            	if (PhaseID > 0)
+						mDBConnector.updatePhase(op);
+					else
+	            		mDBConnector.insertPhase(op);
            		} catch (Exception e) {
-           	        AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
-           	        alertbox.setTitle("Ошибка");
-           	        alertbox.setMessage("Запись на эту дату уже существует");
-           	        alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-           	            @Override
-           				public void onClick(DialogInterface arg0, int arg1) {
-           	                
-           	            }
-           	        });
-           	        alertbox.show();
+           			showAlert ("Фазы цикла не могут пересекаться.");
            			return;
 				}
             	Intent intent = getIntent();
@@ -170,6 +164,19 @@ public class AddPhases extends Activity  {
             	finish();
             }
          });
+    }
+    
+    private void showAlert (String mes) {
+    	AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
+	        alertbox.setTitle("Ошибка");
+	        alertbox.setMessage(mes);
+	        alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+	            @Override
+				public void onClick(DialogInterface arg0, int arg1) {
+	                
+	            }
+	        });
+	        alertbox.show();
     }
     
     public class ImageAdapter extends BaseAdapter {

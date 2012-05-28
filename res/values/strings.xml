@@ -10,6 +10,7 @@
     <string name="save">Сохранить</string>
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
+    <string name="deleteAll">Удалить все</string>
     <string name="cancel">Отмена</string>
     <string name="icon">Icon</string>
     <string name="Statistic">Подробно о цикле</string>
@@ -19,7 +20,7 @@
     <string name="days">Цикл:</string>
     <string name="no_date">Неизвестно</string>
     <string name="no_period">-</string>
-    <string name="day">День:</string>
+    <string name="day">Дн:</string>
     <string name="prefTitle">Emmenia: Настройки</string>
     <string name="prefCommon">Общие</string>
     <string name="prefAdditional">Дополнительные</string>
