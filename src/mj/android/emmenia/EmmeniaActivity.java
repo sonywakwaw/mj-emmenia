@@ -6,7 +6,6 @@ import java.util.Date;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 import android.view.ContextMenu;
@@ -19,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -38,6 +36,7 @@ public class EmmeniaActivity extends Activity {
 	ImageView mIconState;
 	myListAdapter mAdapter;
 	Button mButStat, mButAdd;
+	EmmeniaApp mApp;
 	
 	int ADD_ACTIVITY = 0;
 	int UPDATE_ACTIVITY = 1;
@@ -52,7 +51,7 @@ public class EmmeniaActivity extends Activity {
         Log.w("MY", "EmmeniaActivity");
         
         mContext = this;
-        EmmeniaApp mApp = ((EmmeniaApp) getApplicationContext());
+        mApp = ((EmmeniaApp) getApplicationContext());
         mApp.connectToDataBase();
         
         mDBConnector = mApp.getmDBConnector();
@@ -63,17 +62,6 @@ public class EmmeniaActivity extends Activity {
         mPhase = (TextView)findViewById(R.id.phase);
         mIconState = (ImageView)findViewById(R.id.iconState);
         
-        /*int day = getCurrentDay();
-        
-        if (day > 0)
-        	mCurDay.setText(String.valueOf(day));
-        mNextDate.setText(getNextDate());
-        
-        Pair<String, Integer> pair = mDBConnector.selectPhaseName(day);
-        mPhase.setText(pair.first);
-        if (pair.second > 0)
-        	mIconState.setImageResource(pair.second);
-        */
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
@@ -103,7 +91,8 @@ public class EmmeniaActivity extends Activity {
     }
     
     private void actionStat() {
-    	
+    	Intent i = new Intent(mContext, Statistic.class);
+    	startActivity (i);
     }
     
     private void actionAdd() {
@@ -122,7 +111,7 @@ public class EmmeniaActivity extends Activity {
     
     private String getNextDate() {
         long lastDay = mDBConnector.selectMaxDate();
-        int period = getPeriod ();
+        int period = mApp.getPeriod ();
         Log.w("MY", "period " + period);
         if (period < 0 || lastDay < 0)
         	return getString (R.string.no_date);
@@ -130,7 +119,7 @@ public class EmmeniaActivity extends Activity {
         return DATE_FORMAT.format(new Date (lastDay));
     }
     
-    private int getPeriod () {
+/*    private int getPeriod () {
     	// Настройки
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean prefAutoCalc = settings.getBoolean("autoCalc", true);
@@ -142,7 +131,7 @@ public class EmmeniaActivity extends Activity {
         if (prefPeriod != null && prefPeriod > 0)
         	return prefPeriod;
         return -1;    	
-    }
+    }*/
     
     @Override 
     public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  

@@ -21,30 +21,13 @@
             </intent-filter>
         </activity>
         
-        <activity
-            android:name=".EmmeniaActivity"
-            android:label="@string/app_name" >
-        </activity>
-        
-        <activity
-            android:name=".AddUpdateActivity"
-            android:label="@string/app_name" >
-        </activity>
-        
-        <activity
-            android:name=".Preferences"
-            android:label="@string/prefTitle" >
-        </activity>
-        
-        <activity
-            android:name=".Phases"
-            android:label="@string/prefTitle" >
-        </activity>
-        
-        <activity
-            android:name=".AddPhases"
-            android:label="@string/prefTitle" >
-        </activity>
+        <activity android:name=".EmmeniaActivity" android:label="@string/app_name" />
+        <activity android:name=".AddUpdateActivity" android:label="@string/app_name" />
+        <activity android:name=".Preferences" android:label="@string/prefTitle" />
+        <activity android:name=".Phases" android:label="@string/prefTitle" />
+        <activity android:name=".AddPhases" android:label="@string/prefTitle" />
+        <activity android:name=".Statistic" android:label="@string/statTitle" />
+
     </application>
 
 </manifest>

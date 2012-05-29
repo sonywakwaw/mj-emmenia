@@ -22,6 +22,7 @@
     <string name="no_period">-</string>
     <string name="day">Дн:</string>
     <string name="prefTitle">Emmenia: Настройки</string>
+    <string name="statTitle">Подробно о цикле</string>
     <string name="prefCommon">Общие</string>
     <string name="prefAdditional">Дополнительные</string>
     <string name="autoCalc">Расчитывать период</string>
@@ -34,4 +35,29 @@
     <string name="minus">-</string>
     <string name="description">Описание</string>
     <string name="iconphase">Иконка фазы</string>
+    
+    <string-array name="day_of_month">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Вс</item>
+    </string-array>
+    
+    <string-array name="months">
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Июль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+    </string-array>
 </resources>
