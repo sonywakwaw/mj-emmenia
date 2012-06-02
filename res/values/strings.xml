@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Emmenia</string>
     <string name="app_name">Emmenia</string>
-    <string name="title">Emmenia</string>
     <string name="textfield">Комментарий:</string>
     <string name="datefield">Дата:</string>
     <string name="iconfield">Мое состояние:</string>
@@ -35,7 +33,9 @@
     <string name="minus">-</string>
     <string name="description">Описание</string>
     <string name="iconphase">Иконка фазы</string>
-    
+    <string name="pref"> &lt; </string>
+    <string name="next"> &gt; </string>
+	
     <string-array name="day_of_month">
         <item>Пн</item>
         <item>Вт</item>

@@ -29,7 +29,7 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         
         autoCalc = (CheckBoxPreference)this.findPreference("autoCalc");
         period = (EditTextPreference)this.findPreference("period");
-        additional = (Preference)this.findPreference("additional");
+        additional = this.findPreference("additional");
         
         // слушатель
         autoCalc.setOnPreferenceChangeListener(this);
@@ -39,7 +39,8 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         period.setSummary(period.getText() + " (дн.)");
         
         additional.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
+            @Override
+			public boolean onPreferenceClick(Preference preference) {
             	Intent i = new Intent(mContext, Phases.class);
             	startActivityForResult (i, 0);
             	return true;

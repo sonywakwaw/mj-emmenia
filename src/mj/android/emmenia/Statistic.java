@@ -6,10 +6,15 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -18,7 +23,10 @@ public class Statistic extends Activity {
 	TextView titleMonth;
 	GridView mMonth;
 	Context mContext;
-	DBConnector mDBConnector;
+	String [] weekDays, months;
+	Button toLeft, toRight;
+	Calendar rightNow;
+	GridAdapter mAdapter;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -27,54 +35,104 @@ public class Statistic extends Activity {
         setContentView(R.layout.statistic);
         
         mContext = this;
-        EmmeniaApp mApp = ((EmmeniaApp) getApplicationContext());
-        mDBConnector = mApp.getmDBConnector();
+        Resources res = getResources();
+        months = res.getStringArray(R.array.months);
+        weekDays = res.getStringArray(R.array.day_of_month);
         
-        titleMonth = (TextView)findViewById(R.id.title_month);
-        mMonth = (GridView)findViewById(R.id.month);
+        titleMonth = (TextView)findViewById(R.id.titleMonth);
+        mMonth = (GridView)findViewById(R.id.calendar);
         
-        GridAdapter mAdapter = new GridAdapter (this, 4);
+        rightNow = Calendar.getInstance();
+        rightNow.set(Calendar.DAY_OF_MONTH, 1);
+        int currMonth = rightNow.get(Calendar.MONTH);
+        int currYear = rightNow.get(Calendar.YEAR);
+        
+        mAdapter = new GridAdapter (this, currMonth, currYear);
         mMonth.setAdapter(mAdapter);
         
-        Calendar rightNow = Calendar.getInstance();
-        long lastDay = mDBConnector.selectMaxDate();
-        int period = mApp.getPeriod ();
+        titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
         
-        Log.w("MY", "date: " + rightNow.toString());
-        Log.w("MY", "lastDay: " + lastDay);
-        Log.w("MY", "period: " + period);
+        toLeft = (Button)findViewById(R.id.toLeft);
+        toLeft.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	rightNow.add(Calendar.MONTH, -1);
+            	
+            	int currMonth = rightNow.get(Calendar.MONTH);
+                int currYear = rightNow.get(Calendar.YEAR);
+                
+            	mAdapter.setDate(currMonth, currYear);
+            	mAdapter.notifyDataSetChanged();
+            	
+            	titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
+            }
+         });
         
-        int CountDaysInMonth = rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Log.w("MY", "CountDaysInMonth: " + CountDaysInMonth);
-        
-        int startDay = rightNow.get(Calendar.DAY_OF_WEEK);
-        Log.w("MY", "startDay: " + startDay);
+        toRight = (Button)findViewById(R.id.toRight);
+        toRight.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	rightNow.add(Calendar.MONTH, 1);
+            	
+            	int currMonth = rightNow.get(Calendar.MONTH);
+                int currYear = rightNow.get(Calendar.YEAR);
+                
+            	mAdapter.setDate(currMonth, currYear);
+            	mAdapter.notifyDataSetChanged();
+            	
+            	titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
+            }
+         });
+    }
+    
+    private int toLocale (int week) {
+    	switch (week) {
+    		case Calendar.MONDAY:
+    			return 0;
+    		case Calendar.TUESDAY:
+    			return 1;
+    		case Calendar.WEDNESDAY:
+    			return 2;
+    		case Calendar.THURSDAY:
+    			return 3;
+    		case Calendar.FRIDAY:
+    			return 4;
+    		case Calendar.SATURDAY:
+    			return 5;
+    		case Calendar.SUNDAY:
+    			return 6;
+    	}
+    	return -1;
     }
     
     class GridAdapter extends BaseAdapter
     {
     	private Context mContext;
-    	int curMonth;
-    	int CountDaysInMonth;
-    	int startWeekDay;
+    	private LayoutInflater mLayoutInflater;  
+    	private int currMonth, currYear;
+    	Calendar date;
     	Calendar rightNow;
-    	String[] months, weeks;
     	
-        public GridAdapter(Context context, int month)
+        public GridAdapter(Context context, int month, int year)
         {
             mContext = context;
-            curMonth = month;
+            mLayoutInflater = LayoutInflater.from(mContext); 
             
-            rightNow = Calendar.getInstance();
-        	rightNow.set(Calendar.DAY_OF_MONTH, 1);
-        	rightNow.set(Calendar.MONTH, curMonth);
-        	
-        	CountDaysInMonth = rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);
-            startWeekDay = rightNow.get(Calendar.DAY_OF_WEEK);
-
-            Resources res = getResources();
-            months = res.getStringArray(R.array.months);
-            weeks = res.getStringArray(R.array.day_of_month);
+            currMonth = month;
+            currYear = year;
+            
+            date = Calendar.getInstance();
+            rightNow = (Calendar) date.clone();
+            setDate (currMonth, currYear);
+        }
+        
+        public void setDate (int month, int year) {
+        	date.set(Calendar.DAY_OF_MONTH, 1);
+            date.set(Calendar.MONTH, month);
+            date.set(Calendar.YEAR, year);
+            
+            int dw = date.get(Calendar.DAY_OF_WEEK);
+            date.add(Calendar.DAY_OF_MONTH, (-1) * toLocale(dw));
         }
         
         @Override
@@ -98,21 +156,53 @@ public class Statistic extends Activity {
     	@Override
     	public View getView(int position, View convertView, ViewGroup parent) {
     		
-    		TextView view;
+    		if (convertView == null)  
+    	        convertView = mLayoutInflater.inflate(R.layout.item_calendar, null);  
     		
-            if (convertView == null)
-                view = new TextView(mContext);
-            else
-                view = (TextView)convertView;
-            
+    	    TextView view = (TextView)convertView.findViewById(R.id.item);  
+    	    LinearLayout layout = (LinearLayout)convertView.findViewById(R.id.layout);
+    	    ImageView phase = (ImageView)convertView.findViewById(R.id.phase);
+    	    
             if (position < 7)
             {
-            	view.setText(weeks[position]);
-            	return view;
+            	view.setText(weekDays[position]);
+            	if (position > 4)
+            		layout.setBackgroundResource(R.drawable.weekend);
+            	else
+            		layout.setBackgroundResource(R.drawable.workday);
+            	return convertView;
             }
-            view.setText(String.valueOf(position));
+                        
+            int day = date.get(Calendar.DAY_OF_MONTH);
+            int month = date.get(Calendar.MONTH);
             
-            return view;
+            view.setText(String.valueOf(day));
+            if (month == currMonth) {
+	            if ((position - 5)%7 == 0 || (position - 6)%7 == 0)
+	            	layout.setBackgroundResource(R.drawable.weekend_day);
+	            else
+	            	layout.setBackgroundResource(R.drawable.workday_day);
+	            
+	            Log.w("MY", "rightNow: " + rightNow);
+	            if (date.compareTo(rightNow) == 0)
+	            	layout.setBackgroundResource(R.drawable.current_day);
+            }
+            else
+            	layout.setBackgroundResource(R.drawable.not_month);
+            
+            if (position == 12)
+            	phase.setImageResource(R.drawable.i_green);
+            if (position == 13)
+            	phase.setImageResource(R.drawable.i_l_green);
+            if (position == 24)
+            	phase.setImageResource(R.drawable.i_red);
+            if (position == 28)
+            	phase.setImageResource(R.drawable.i_yellow);
+            
+            
+            date.add(Calendar.DAY_OF_MONTH, 1);
+                        
+            return convertView;
     	}
     }
 }
