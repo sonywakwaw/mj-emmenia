@@ -124,6 +124,8 @@ public class Statistic extends Activity {
             date = Calendar.getInstance();
             rightNow = (Calendar) date.clone();
             setDate (currMonth, currYear);
+            
+            EmmCalendar ec = new EmmCalendar(mContext);
         }
         
         public void setDate (int month, int year) {
@@ -183,7 +185,6 @@ public class Statistic extends Activity {
 	            else
 	            	layout.setBackgroundResource(R.drawable.workday_day);
 	            
-	            Log.w("MY", "rightNow: " + rightNow);
 	            if (date.compareTo(rightNow) == 0)
 	            	layout.setBackgroundResource(R.drawable.current_day);
             }
