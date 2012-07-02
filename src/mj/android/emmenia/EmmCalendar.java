@@ -1,11 +1,9 @@
 package mj.android.emmenia;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
-import android.util.Log;
 
 public class EmmCalendar implements Serializable{
 	

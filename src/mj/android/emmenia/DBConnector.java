@@ -44,10 +44,14 @@ public class DBConnector {
 	private static final int P_NUM_COLUMN_ICON = 4;
 	
 	private OpenHelper mOpenHelper;
+	
+	EmmeniaApp mApp;
 
 	public DBConnector(Context context) {
 		mOpenHelper = new OpenHelper(context);
 		Log.w("MY", "DBConnector");
+		
+		mApp = ((EmmeniaApp) context);
 	}
 	
 	public long insert(OneEntry md) throws Exception {
@@ -118,6 +122,7 @@ public class DBConnector {
 				String title = mCursor.getString(NUM_COLUMN_TITLE);
 				int icon = mCursor.getInt(NUM_COLUMN_ICON);
 				OneEntry md = new OneEntry(id, date, title, icon);
+				Log.w("MY", "date: " + date);
 				int days = -1;
 				if (prevDate > 0)
 					days = (int)((date - prevDate) / 1000 / 60 / 60 / 24);
@@ -127,6 +132,7 @@ public class DBConnector {
 			} while (mCursor.moveToNext());
 		}
 		Collections.reverse(arr);
+		Log.w("MY", "size: " + arr.size());
 		mDataBase.close();
 		return arr;
 	}
@@ -313,11 +319,11 @@ public class DBConnector {
 			// Добавляем начальные данные
 			String prefix = "INSERT INTO " + TABLE_NAME_PHASE + " (" + P_COLUMN_FROM + ", " + 
 					P_COLUMN_TO + ", " + P_COLUMN_DESC + ", " + P_COLUMN_ICON + ") values ";
-			db.execSQL(prefix + " (1, 4, \"Менструация\", " + R.drawable.i_yellow + ");");
-			db.execSQL(prefix + " (5, 10, \"Безопасный секс\", " + R.drawable.i_green + ");");
-			db.execSQL(prefix + " (11, 15, \"Овуляция\", " + R.drawable.i_blue + ");");
-			db.execSQL(prefix + " (16, 23, \"Условно безопасный секс\", " + R.drawable.i_l_green + ");");
-			db.execSQL(prefix + " (24, 28, \"ПМС\", " + R.drawable.i_red + ");");
+			db.execSQL(prefix + " (1, 4, \"Менструация\", " + mApp.getIndexStatus(R.drawable.i_yellow) + ");");
+			db.execSQL(prefix + " (5, 10, \"Безопасный секс\", " + mApp.getIndexStatus(R.drawable.i_green) + ");");
+			db.execSQL(prefix + " (11, 15, \"Овуляция\", " + mApp.getIndexStatus(R.drawable.i_blue) + ");");
+			db.execSQL(prefix + " (16, 23, \"Условно безопасный секс\", " + mApp.getIndexStatus(R.drawable.i_l_green) + ");");
+			db.execSQL(prefix + " (24, 28, \"ПМС\", " + mApp.getIndexStatus(R.drawable.i_red) + ");");
 		}
 		
 		@Override

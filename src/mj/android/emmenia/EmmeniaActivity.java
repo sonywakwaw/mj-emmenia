@@ -65,7 +65,6 @@ public class EmmeniaActivity extends Activity {
         // Список
         mListView = (ListView)findViewById(R.id.list);
         mAdapter = new myListAdapter(mContext);
-        //mAdapter.setArrayMyData(mDBConnector.selectAll());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         
@@ -118,20 +117,6 @@ public class EmmeniaActivity extends Activity {
         lastDay += (long)period * 24 * 60 * 60 * 1000;
         return DATE_FORMAT.format(new Date (lastDay));
     }
-    
-/*    private int getPeriod () {
-    	// Настройки
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean prefAutoCalc = settings.getBoolean("autoCalc", true);
-        Log.w("MY", "prefAutoCalc: " + prefAutoCalc);
-        if (prefAutoCalc)
-        	return mDBConnector.selectAvg();
-        Integer prefPeriod = Integer.getInteger(settings.getString("period", null));
-        Log.w("MY", "prefPeriod: " + prefPeriod);
-        if (prefPeriod != null && prefPeriod > 0)
-        	return prefPeriod;
-        return -1;    	
-    }*/
     
     @Override 
     public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
@@ -211,12 +196,9 @@ public class EmmeniaActivity extends Activity {
         Pair<String, Integer> pair = mDBConnector.selectPhaseName(day);
         mPhase.setText(pair.first);
         if (pair.second > 0)
-        	mIconState.setImageResource(pair.second);
+        	mIconState.setImageResource(mApp.getIconStatus(pair.second));
         else
         	mIconState.setImageResource(android.R.color.transparent);
-                	
-        
-        
     }
         
     class myListAdapter extends BaseAdapter {
@@ -230,6 +212,7 @@ public class EmmeniaActivity extends Activity {
     	
 		public void setArrayMyData(ArrayList<OneEntry> arrayMyData) {
 			this.arrayMyData = arrayMyData;
+			Log.w("MY", "setArrayMyData: size - " + this.arrayMyData.size());
 		}
     	
     	@Override
@@ -254,6 +237,7 @@ public class EmmeniaActivity extends Activity {
     	@Override
 		public View getView(int position, View convertView, ViewGroup parent) { 
    		
+    		Log.w ("MY", "getView: position - " + position);
     		if (convertView == null)
     			convertView = mLayoutInflater.inflate(R.layout.item, null);
     		
@@ -262,12 +246,10 @@ public class EmmeniaActivity extends Activity {
     		TextView vDate = (TextView)convertView.findViewById(R.id.Date);
     		TextView vDays = (TextView)convertView.findViewById(R.id.Days);
     		
-    		 
-    		
     		OneEntry md = arrayMyData.get(position);    			
    			vDate.setText(DATE_FORMAT.format(md.getDate()));
    			vTitle.setText(md.getTitle());
-   			vIcon.setImageResource(md.getIcon());
+   			vIcon.setImageResource(mApp.getIconEmoticons((md.getIcon())));
    			int days = md.getDays();
    			if (days < 0)
    				vDays.setText("-");

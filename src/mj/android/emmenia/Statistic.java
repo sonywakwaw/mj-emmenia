@@ -4,8 +4,8 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -191,7 +191,9 @@ public class Statistic extends Activity {
             else
             	layout.setBackgroundResource(R.drawable.not_month);
             
-            if (position == 12)
+            
+            
+            /*if (position == 12)
             	phase.setImageResource(R.drawable.i_green);
             if (position == 13)
             	phase.setImageResource(R.drawable.i_l_green);
@@ -199,7 +201,7 @@ public class Statistic extends Activity {
             	phase.setImageResource(R.drawable.i_red);
             if (position == 28)
             	phase.setImageResource(R.drawable.i_yellow);
-            
+            */
             
             date.add(Calendar.DAY_OF_MONTH, 1);
                         

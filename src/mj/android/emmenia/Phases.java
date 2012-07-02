@@ -28,6 +28,7 @@ public class Phases extends Activity {
 	ListView mListView;
 	myListAdapter mAdapter;
 	Button mButAdd;
+	EmmeniaApp mApp;
 	
     /** Called when the activity is first created. */
     @Override
@@ -36,7 +37,7 @@ public class Phases extends Activity {
         setContentView(R.layout.phase);
         
         mContext = this;
-        EmmeniaApp mApp = ((EmmeniaApp) getApplicationContext());
+        mApp = ((EmmeniaApp) getApplicationContext());
         mApp.connectToDataBase();
         
         mDBConnector = mApp.getmDBConnector();
@@ -171,7 +172,7 @@ public class Phases extends Activity {
     		
     		OnePhase op = arrayMyData.get(position);    			
 
-    		vIcon.setImageResource(op.getIcon());
+    		vIcon.setImageResource(mApp.getIconStatus(op.getIcon()));
     		vDesc.setText(op.getDesc());
     		
     		String period = "с " + op.getFrom() + " по " + op.getTo();

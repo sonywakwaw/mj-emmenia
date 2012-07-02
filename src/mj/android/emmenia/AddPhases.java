@@ -5,17 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;  
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;  
 import android.util.Log;
 import android.view.View;  
-import android.view.ViewGroup;  
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.BaseAdapter;  
 import android.widget.Button;
 import android.widget.Gallery;  
-import android.widget.ImageView;  
 import android.widget.TextView;
 
 public class AddPhases extends Activity  {
@@ -27,6 +22,7 @@ public class AddPhases extends Activity  {
 	Context mContext;
 	private long PhaseID;
 	DBConnector mDBConnector;
+	EmmeniaApp mApp;
 	
     /** Called when the activity is first created. */
     @Override
@@ -37,12 +33,12 @@ public class AddPhases extends Activity  {
         Log.w("MY", "AddPhases");
         
         mContext = this;
-        EmmeniaApp mApp = ((EmmeniaApp)this.getApplication());
+        mApp = ((EmmeniaApp)this.getApplication());
         mDBConnector = mApp.getmDBConnector();
         
         // Галерея
         mGallery = (Gallery) findViewById(R.id.gallery);
-        mImageAdapter = new ImageAdapter(this);  
+        mImageAdapter = new ImageAdapter(this, mApp.getImgStatus());  
         mGallery.setAdapter(mImageAdapter);
         
         // Текст и дата
@@ -139,8 +135,10 @@ public class AddPhases extends Activity  {
             	
             	if (Integer.parseInt(mDayFrom.getText().toString()) > Integer.parseInt(mDayTo.getText().toString()))
             		showAlert ("День 'c' должен быть меньше чем 'по'");
+            	
+            	Integer ResID = mImageAdapter.getResourceId(mGallery.getSelectedItemPosition());
            		OnePhase op = new OnePhase (PhaseID, Integer.parseInt(mDayFrom.getText().toString()),
-           				Integer.parseInt(mDayTo.getText().toString()), mTextView.getText().toString(), mImageAdapter.getResourceId(mGallery.getSelectedItemPosition()));
+           				Integer.parseInt(mDayTo.getText().toString()), mTextView.getText().toString(), mApp.getIndexStatus(ResID));
            		Log.w("MY", "Phase: " + PhaseID);          		
            		try {           			
 	            	if (PhaseID > 0)
@@ -177,61 +175,5 @@ public class AddPhases extends Activity  {
 	            }
 	        });
 	        alertbox.show();
-    }
-    
-    public class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-        int bg;
-
-        private int[] mImageIds = {  
-        		R.drawable.i_l_blue, R.drawable.i_l_green, R.drawable.i_l_red, R.drawable.i_l_yellow, 
-        		R.drawable.i_gray, R.drawable.i_yellow, R.drawable.i_red, R.drawable.i_green, R.drawable.i_blue};  
-
-        public ImageAdapter(Context c) {
-            mContext = c;
-            TypedArray attr = mContext.obtainStyledAttributes(R.styleable.MyGallery);
-            bg = attr.getResourceId(R.styleable.MyGallery_android_galleryItemBackground, 0);
-            attr.recycle();
-        }
-
-        @Override
-		public int getCount() {
-            return mImageIds.length;
-        }
-
-        @Override
-		public Object getItem(int position) {
-            return position;
-        }
-
-        @Override
-		public long getItemId(int position) {
-            return position;
-        }
-        
-        public int getResourceId(int position) {
-        	
-        	int id = mImageIds[position];
-            return id;
-        }
-        
-        public int getPositionbyResId(int ResId) {
-        	
-        	for (int i = 0; i < mImageIds.length; i++)
-        		if (mImageIds[i] == ResId)
-        			return i;
-            return 0;
-        }
-        
-        @Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView = new ImageView(mContext);
-            imageView.setImageResource(mImageIds[position]);
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
-            imageView.setPadding(2, 2, 2, 2);
-            imageView.setBackgroundResource(bg);
-            imageView.setLayoutParams(new Gallery.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            return imageView;
-        }
     }
 }

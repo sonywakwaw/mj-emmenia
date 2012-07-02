@@ -17,6 +17,7 @@ public class Day implements Serializable{
 	public Calendar getDate () {return date;}
 	public int getPhase () {return phase;}
 	
+	@Override
 	public String toString () {
 		return "date: " + date + " phase: " + phase;
 		
