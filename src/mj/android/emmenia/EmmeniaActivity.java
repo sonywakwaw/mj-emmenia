@@ -22,6 +22,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +38,11 @@ public class EmmeniaActivity extends Activity {
 	myListAdapter mAdapter;
 	Button mButStat, mButAdd;
 	EmmeniaApp mApp;
+	LinearLayout mCalendar;
+	ListView mList;
+	
+	enum ScreenView { SV_LIST, SV_CALENDAR }
+	ScreenView CURRENT_VIEW;
 	
 	int ADD_ACTIVITY = 0;
 	int UPDATE_ACTIVITY = 1;
@@ -72,10 +78,19 @@ public class EmmeniaActivity extends Activity {
         mButStat = (Button)findViewById(R.id.but_stat);
         mButAdd = (Button)findViewById(R.id.but_add);
         
+        // Текущее представление - список
+        mCalendar = (LinearLayout)findViewById(R.id.calendar);
+    	mList = (ListView)findViewById(R.id.list);
+    	
+        CURRENT_VIEW = ScreenView.SV_LIST;
+        mButStat.setBackgroundResource(R.drawable.b_stat);
+        mList.setVisibility(View.VISIBLE);
+		mCalendar.setVisibility(View.INVISIBLE);
+        
         mButStat.setOnClickListener (new OnClickListener() {
             @Override
 			public void onClick(View v) {
-            	actionStat();
+            	SwitchCurrentView();
             }
          });
         
@@ -89,9 +104,22 @@ public class EmmeniaActivity extends Activity {
         updateData();
     }
     
-    private void actionStat() {
-    	Intent i = new Intent(mContext, Statistic.class);
-    	startActivity (i);
+    private void SwitchCurrentView() {
+    	
+    	switch (CURRENT_VIEW) {
+    		case SV_LIST:
+    			mList.setVisibility(View.INVISIBLE);
+    			mCalendar.setVisibility(View.VISIBLE);
+    			mButStat.setBackgroundResource(R.drawable.b_list);  			
+    			CURRENT_VIEW = ScreenView.SV_CALENDAR;
+    			break;
+    		case SV_CALENDAR:
+    			mList.setVisibility(View.VISIBLE);
+    			mCalendar.setVisibility(View.INVISIBLE);
+    			mButStat.setBackgroundResource(R.drawable.b_stat); 
+    			CURRENT_VIEW = ScreenView.SV_LIST;
+    			break;    	
+    	}
     }
     
     private void actionAdd() {
@@ -158,9 +186,6 @@ public class EmmeniaActivity extends Activity {
         switch (item.getItemId()) {
 	        case R.id.add:
 	        	actionAdd();
-            	break;
-            case R.id.stat:
-            	actionStat();
             	break;
             case R.id.settings:
             	startActivity(new Intent(mContext, Preferences.class));

@@ -4,10 +4,6 @@
         android:title="@string/add" 
         android:icon="@drawable/b_add"/>
     
-	<item android:id="@+id/stat" 
-	    android:title="@string/Statistic" 
-	    android:icon="@drawable/b_stat"/>
-	
 	<item android:id="@+id/settings" 
 	    android:title="@string/Settings" 
 	    android:icon="@drawable/b_prefs"/>

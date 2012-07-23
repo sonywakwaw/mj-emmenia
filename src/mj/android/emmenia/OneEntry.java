@@ -25,5 +25,6 @@ public class OneEntry implements Serializable{
 	public int getDays () {return days;}
 	public void setDays (int days) {this.days = days;}
 	
+	@Override
 	public String toString () {return "id: " + id + " date: " + date;}
 }

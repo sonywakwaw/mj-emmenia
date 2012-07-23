@@ -4,7 +4,6 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,7 @@ public class Statistic extends Activity {
         weekDays = res.getStringArray(R.array.day_of_month);
         
         titleMonth = (TextView)findViewById(R.id.titleMonth);
-        mMonth = (GridView)findViewById(R.id.calendar);
+        mMonth = (GridView)findViewById(R.id.grid);
         
         rightNow = Calendar.getInstance();
         rightNow.set(Calendar.DAY_OF_MONTH, 1);

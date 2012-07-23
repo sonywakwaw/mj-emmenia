@@ -66,7 +66,6 @@
             android:id="@+id/but_stat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/b_stat"
             android:layout_gravity="center"
             android:layout_marginRight="10dp"
         />
@@ -88,10 +87,67 @@
 	        android:layout_marginBottom="20dp"
 	    />
     
-    <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/list"
-    />
+    <FrameLayout
+        android:id="@+id/content"
+ 		android:layout_width="fill_parent"
+ 		android:layout_height="fill_parent">
+	    
+	    <ListView
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:id="@+id/list"
+	    />
+	    
+	    <LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:orientation="vertical"
+			android:id="@+id/calendar">
+			
+		    <LinearLayout 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal" >
+			
+		        <Button  
+				    android:id="@+id/toLeft"
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="5dp"
+					android:background="@drawable/arrow_left"
+				/>
+		        
+				<TextView  
+				    android:id="@+id/titleMonth"
+					android:layout_width="0dp" 
+					android:layout_height="fill_parent"
+					android:layout_weight="1"
+					android:gravity="center|center"
+					style="@style/listDate"
+				/>
+				
+				<Button  
+				    android:id="@+id/toRight"
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content"
+					android:layout_marginRight="5dp"
+					android:background="@drawable/arrow_right"
+				/>
+				
+			</LinearLayout>
+			<GridView  
+				android:id="@+id/grid"
+				android:layout_width="fill_parent" 
+				android:layout_height="wrap_content"
+				android:numColumns="7"
+				android:horizontalSpacing="1dp"
+				android:verticalSpacing="1dp"
+				android:listSelector="@android:color/transparent"
+				android:layout_gravity="center"
+				android:layout_marginTop="20dp"
+			/>
+			
+		</LinearLayout>
 	
+    </FrameLayout>>
 </LinearLayout>
