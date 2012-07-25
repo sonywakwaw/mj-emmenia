@@ -139,7 +139,6 @@ public class AddPhases extends Activity  {
             	Integer ResID = mImageAdapter.getResourceId(mGallery.getSelectedItemPosition());
            		OnePhase op = new OnePhase (PhaseID, Integer.parseInt(mDayFrom.getText().toString()),
            				Integer.parseInt(mDayTo.getText().toString()), mTextView.getText().toString(), mApp.getIndexStatus(ResID));
-           		Log.w("MY", "Phase: " + PhaseID);          		
            		try {           			
 	            	if (PhaseID > 0)
 						mDBConnector.updatePhase(op);

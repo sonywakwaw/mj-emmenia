@@ -122,7 +122,6 @@ public class DBConnector {
 				String title = mCursor.getString(NUM_COLUMN_TITLE);
 				int icon = mCursor.getInt(NUM_COLUMN_ICON);
 				OneEntry md = new OneEntry(id, date, title, icon);
-				Log.w("MY", "date: " + date);
 				int days = -1;
 				if (prevDate > 0)
 					days = (int)((date - prevDate) / 1000 / 60 / 60 / 24);
@@ -132,7 +131,6 @@ public class DBConnector {
 			} while (mCursor.moveToNext());
 		}
 		Collections.reverse(arr);
-		Log.w("MY", "size: " + arr.size());
 		mDataBase.close();
 		return arr;
 	}
@@ -271,11 +269,8 @@ public class DBConnector {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Pair<String, Integer> selectPhaseName(int day) {
-		Log.w("MY", "day: " + day);
 		SQLiteDatabase mDataBase = mOpenHelper.getReadableDatabase();
 		Cursor mCursor = mDataBase.query(TABLE_NAME_PHASE, null, P_COLUMN_FROM + " <= ? AND " + P_COLUMN_TO + " >= ?", new String[] { String.valueOf(day), String.valueOf(day) }, null, null, null);
-
-		Log.w("MY", "count: " + mCursor.getCount());
 		
 		int icon = -1;
 		String desc = "";

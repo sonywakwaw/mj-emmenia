@@ -26,8 +26,6 @@
         <activity android:name=".Preferences" android:label="@string/prefTitle" />
         <activity android:name=".Phases" android:label="@string/prefTitle" />
         <activity android:name=".AddPhases" android:label="@string/prefTitle" />
-        <activity android:name=".Statistic" android:label="@string/statTitle" />
-
     </application>
 
 </manifest>

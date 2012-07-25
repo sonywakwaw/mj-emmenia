@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -14,6 +15,7 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
 {
 	CheckBoxPreference autoCalc;
 	EditTextPreference period;
+	ListPreference screen;
 	Preference additional;
 	Context mContext;
 	
@@ -29,14 +31,17 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
         
         autoCalc = (CheckBoxPreference)this.findPreference("autoCalc");
         period = (EditTextPreference)this.findPreference("period");
+        screen = (ListPreference)this.findPreference("firstscreen");
         additional = this.findPreference("additional");
         
         // слушатель
         autoCalc.setOnPreferenceChangeListener(this);
         period.setOnPreferenceChangeListener(this);
+        screen.setOnPreferenceChangeListener(this);
         
         // пишем в summary текущее значение
         period.setSummary(period.getText() + " (дн.)");
+        screen.setSummary(screen.getEntry());
         
         additional.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
@@ -54,23 +59,16 @@ public class Preferences extends PreferenceActivity implements Preference.OnPref
     	// название (android:key) настройки, которая была изменена
     	String Key = preference.getKey();
     	
-    	// если это коллекция картинок
     	if (Key.equals("period"))
-    	{
     		period.setSummary(newValue.toString() + " (дн.)");
-    		return true;
+
+    	
+    	if (Key.equals("firstscreen")) {
+    		 CharSequence[] arr = screen.getEntries();
+    	    int i = (screen).findIndexOfValue(newValue.toString());
+    	    screen.setSummary(arr[i]);
     	}
     	
-    	// если это цвет
-/*    	if (Key.equals("BackgroundColor"))
-    	{
-    		int i = ((ListPreference)preference).findIndexOfValue(newValue.toString());
-    		preference.setSummary(colValue[i]);
-    		return true;
-    	}
-    	
-    	// для всех остальных настроек (хотя у нас их и нет), ставим пришедшее значение в summary
-        preference.setSummary((CharSequence)newValue);*/
         return true;
     }
 }

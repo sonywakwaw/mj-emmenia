@@ -1,5 +1,7 @@
 package mj.android.emmenia;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -16,6 +18,10 @@ public class EmmeniaApp extends Application {
 	
 	public Integer getIconEmoticons (int i) {return imgEmoticons[i];}
 	public Integer getIconStatus (int i) {return imgStatus[i];}
+	
+	public SimpleDateFormat getDateFormat () {
+		return new SimpleDateFormat("dd/MM/yyyy");
+	}
 	
 	public int getIndexEmoticons (Integer obj) {
 		for (int i = 0; i < imgEmoticons.length; i++)
@@ -48,5 +54,12 @@ public class EmmeniaApp extends Application {
         if (prefPeriod != null && prefPeriod > 0)
         	return prefPeriod;
         return -1;    	
+    }
+    
+    public String getFirstScreen () {
+    	// Настройки
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String pref = settings.getString("firstscreen", "list");
+        return pref;
     }
 }

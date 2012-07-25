@@ -1,26 +1,23 @@
 package mj.android.emmenia;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.content.res.Resources;
 import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.os.Bundle;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -35,30 +32,37 @@ public class EmmeniaActivity extends Activity {
 	TextView mCurDay;
 	TextView mPhase;
 	ImageView mIconState;
-	myListAdapter mAdapter;
+	ListAdapter mListAdapter;
 	Button mButStat, mButAdd;
 	EmmeniaApp mApp;
 	LinearLayout mCalendar;
 	ListView mList;
 	
-	enum ScreenView { SV_LIST, SV_CALENDAR }
+	TextView titleMonth;
+	GridView mMonth;
+	String [] weekDays, months;
+	Button toLeft, toRight;
+	Calendar rightNow;
+	GridAdapter mGridAdapter;
+	
+	enum ScreenView { SV_LIST, SV_CALENDAR }; 
 	ScreenView CURRENT_VIEW;
 	
 	int ADD_ACTIVITY = 0;
 	int UPDATE_ACTIVITY = 1;
 	
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
-	
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        Log.w("MY", "EmmeniaActivity");
         
-        mContext = this;
+        mContext = getApplicationContext();
         mApp = ((EmmeniaApp) getApplicationContext());
         mApp.connectToDataBase();
+        
+        Resources res = getResources();
+        months = res.getStringArray(R.array.months);
+        weekDays = res.getStringArray(R.array.day_of_month);
         
         mDBConnector = mApp.getmDBConnector();
         
@@ -70,8 +74,8 @@ public class EmmeniaActivity extends Activity {
         
         // Список
         mListView = (ListView)findViewById(R.id.list);
-        mAdapter = new myListAdapter(mContext);
-        mListView.setAdapter(mAdapter);
+        mListAdapter = new ListAdapter(mContext);
+        mListView.setAdapter(mListAdapter);
         registerForContextMenu(mListView);
         
         // Кнопки
@@ -82,10 +86,18 @@ public class EmmeniaActivity extends Activity {
         mCalendar = (LinearLayout)findViewById(R.id.calendar);
     	mList = (ListView)findViewById(R.id.list);
     	
-        CURRENT_VIEW = ScreenView.SV_LIST;
-        mButStat.setBackgroundResource(R.drawable.b_stat);
-        mList.setVisibility(View.VISIBLE);
-		mCalendar.setVisibility(View.INVISIBLE);
+    	if (mApp.getFirstScreen().equalsIgnoreCase("list")) {
+	        CURRENT_VIEW = ScreenView.SV_LIST;
+	        mButStat.setBackgroundResource(R.drawable.b_stat);
+	        mList.setVisibility(View.VISIBLE);
+			mCalendar.setVisibility(View.INVISIBLE);
+    	}
+    	else if (mApp.getFirstScreen().equalsIgnoreCase("calendar"))  {
+    		CURRENT_VIEW = ScreenView.SV_CALENDAR;
+	        mButStat.setBackgroundResource(R.drawable.b_list);
+	        mList.setVisibility(View.INVISIBLE);
+			mCalendar.setVisibility(View.VISIBLE);    		
+    	}
         
         mButStat.setOnClickListener (new OnClickListener() {
             @Override
@@ -101,6 +113,52 @@ public class EmmeniaActivity extends Activity {
             }
          });
         
+        // Календарь
+        titleMonth = (TextView)findViewById(R.id.titleMonth);
+        mMonth = (GridView)findViewById(R.id.grid);
+        
+        rightNow = Calendar.getInstance();
+        rightNow.set(Calendar.DAY_OF_MONTH, 1);
+        int currMonth = rightNow.get(Calendar.MONTH);
+        int currYear = rightNow.get(Calendar.YEAR);
+        
+        mGridAdapter = new GridAdapter (this, currMonth, currYear);
+        mMonth.setAdapter(mGridAdapter);
+        
+        titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
+        
+        toLeft = (Button)findViewById(R.id.toLeft);
+        toLeft.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	rightNow.add(Calendar.MONTH, -1);
+            	
+            	int currMonth = rightNow.get(Calendar.MONTH);
+                int currYear = rightNow.get(Calendar.YEAR);
+                
+                mGridAdapter.setDate(currMonth, currYear);
+                mGridAdapter.notifyDataSetChanged();
+            	
+            	titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
+            }
+         });
+        
+        toRight = (Button)findViewById(R.id.toRight);
+        toRight.setOnClickListener (new OnClickListener() {
+            @Override
+			public void onClick(View v) {
+            	rightNow.add(Calendar.MONTH, 1);
+            	
+            	int currMonth = rightNow.get(Calendar.MONTH);
+                int currYear = rightNow.get(Calendar.YEAR);
+                
+                mGridAdapter.setDate(currMonth, currYear);
+                mGridAdapter.notifyDataSetChanged();
+            	
+            	titleMonth.setText(months[currMonth] + ", " + String.valueOf(currYear));
+            }
+         });
+   
         updateData();
     }
     
@@ -139,11 +197,10 @@ public class EmmeniaActivity extends Activity {
     private String getNextDate() {
         long lastDay = mDBConnector.selectMaxDate();
         int period = mApp.getPeriod ();
-        Log.w("MY", "period " + period);
         if (period < 0 || lastDay < 0)
         	return getString (R.string.no_date);
         lastDay += (long)period * 24 * 60 * 60 * 1000;
-        return DATE_FORMAT.format(new Date (lastDay));
+        return mApp.getDateFormat().format(new Date (lastDay));
     }
     
     @Override 
@@ -209,8 +266,10 @@ public class EmmeniaActivity extends Activity {
     }
     
     private void updateData () {
-    	mAdapter.setArrayMyData(mDBConnector.selectAll());
-    	mAdapter.notifyDataSetChanged();
+    	mListAdapter.setArrayMyData(mDBConnector.selectAll());
+    	mListAdapter.notifyDataSetChanged();
+    	
+    	mGridAdapter.notifyDataSetChanged();
     	
     	int day = getCurrentDay();
         
@@ -225,63 +284,4 @@ public class EmmeniaActivity extends Activity {
         else
         	mIconState.setImageResource(android.R.color.transparent);
     }
-        
-    class myListAdapter extends BaseAdapter {
-    	private LayoutInflater mLayoutInflater;
-    	private ArrayList<OneEntry> arrayMyData;
-    	    	
-    	public myListAdapter (Context ctx) {
-    		mLayoutInflater = LayoutInflater.from(ctx);
-    		arrayMyData = new ArrayList<OneEntry> ();
-    	}
-    	
-		public void setArrayMyData(ArrayList<OneEntry> arrayMyData) {
-			this.arrayMyData = arrayMyData;
-			Log.w("MY", "setArrayMyData: size - " + this.arrayMyData.size());
-		}
-    	
-    	@Override
-		public int getCount () {
-    		return arrayMyData.size();
-    	}
-    		
-    	@Override
-		public Object getItem (int position) {
-    		return position;
-    	}
-    		
-    	@Override
-		public long getItemId (int position) {
-    		OneEntry md = arrayMyData.get(position);
-    		if (md != null) {
-    			return md.getID();
-    		}
-    		return 0;
-    	}
-    		
-    	@Override
-		public View getView(int position, View convertView, ViewGroup parent) { 
-   		
-    		Log.w ("MY", "getView: position - " + position);
-    		if (convertView == null)
-    			convertView = mLayoutInflater.inflate(R.layout.item, null);
-    		
-    		ImageView vIcon = (ImageView)convertView.findViewById(R.id.Icon);
-    		TextView vTitle = (TextView)convertView.findViewById(R.id.Title);
-    		TextView vDate = (TextView)convertView.findViewById(R.id.Date);
-    		TextView vDays = (TextView)convertView.findViewById(R.id.Days);
-    		
-    		OneEntry md = arrayMyData.get(position);    			
-   			vDate.setText(DATE_FORMAT.format(md.getDate()));
-   			vTitle.setText(md.getTitle());
-   			vIcon.setImageResource(mApp.getIconEmoticons((md.getIcon())));
-   			int days = md.getDays();
-   			if (days < 0)
-   				vDays.setText("-");
-   			else
-   				vDays.setText(String.valueOf(days));
-    			
-    		return convertView;
-    	}
-    } 
 }

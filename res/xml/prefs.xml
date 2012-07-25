@@ -25,6 +25,17 @@
 	</PreferenceCategory>
 	
 	<PreferenceCategory
+		android:title="@string/prefInterface">
+		
+		<ListPreference 
+			android:key="firstscreen"
+		 	android:title="@string/firstscreen"
+		 	android:entries="@array/screens"
+		 	android:entryValues="@array/screensValue"
+		/>
+	</PreferenceCategory>
+	
+	<PreferenceCategory
 		android:title="@string/prefAdditional">
 		<Preference
 			 android:key="additional"

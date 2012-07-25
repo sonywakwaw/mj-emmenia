@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;  
-import android.util.Log;
 import android.view.View;  
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -77,7 +76,6 @@ public class AddUpdateActivity extends Activity  {
 				else
             		mDBConnector.insert(md);
            		} catch (Exception e) {
-           			Log.w("MY", "-3-");
            	        AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
            	        alertbox.setTitle("Ошибка");
            	        alertbox.setMessage("Запись на эту дату уже существует");
@@ -90,7 +88,6 @@ public class AddUpdateActivity extends Activity  {
            	        alertbox.show();
            			return;
 				}
-           		Log.w("MY", "-4-");
             	Intent intent = getIntent();
             	setResult(RESULT_OK, intent);
             	finish();

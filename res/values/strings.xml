@@ -23,9 +23,11 @@
     <string name="statTitle">Подробно о цикле</string>
     <string name="prefCommon">Общие</string>
     <string name="prefAdditional">Дополнительные</string>
+    <string name="prefInterface">Интерфейс</string>
     <string name="autoCalc">Расчитывать период</string>
     <string name="autoCalcSum">Автоматический расчет периода</string>
     <string name="period">Точный период</string>
+    <string name="firstscreen">При запуске открывать</string>
     <string name="Additional">Фазы цикла</string>
     <string name="phasedate">Дни цикла с</string>
     <string name="to">по</string>
@@ -59,5 +61,15 @@
         <item>Октябрь</item>
         <item>Ноябрь</item>
         <item>Декабрь</item>
+    </string-array>
+    
+    <string-array name="screensValue">
+        <item>list</item>
+        <item>calendar</item>
+    </string-array>
+    
+    <string-array name="screens">
+        <item>Список</item>
+        <item>Календарь</item>
     </string-array>
 </resources>
